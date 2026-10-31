@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monty Go SDN - نظام إدارة مبيعات شرائح زين</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Cairo & Tajawal -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        glassWhite: 'rgba(255, 255, 255, 0.75)',
+                        glassWhiteCard: 'rgba(255, 255, 255, 0.65)',
+                        glassBorder: 'rgba(255, 255, 255, 0.9)',
+                        slateDark: '#0f172a',
+                        slateText: '#334155',
+                        cyanPrimary: '#0284c7',
+                        cyanLight: '#e0f2fe',
+                        purpleSoft: '#7c3aed',
+                        purpleLight: '#f3e8ff'
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                        tajawal: ['Tajawal', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #f0f4f9 0%, #e2e8f0 40%, #e0f2fe 100%);
+            color: #1e293b;
+            min-height: 100vh;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 10px 30px 0 rgba(31, 38, 135, 0.07);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(2, 132, 199, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(2, 132, 199, 0.1);
+        }
+
+        .glow-button {
+            background: linear-gradient(90deg, #0284c7 0%, #2563eb 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(2, 132, 199, 0.25);
+            transition: all 0.3s ease;
+        }
+
+        .glow-button:hover {
+            box-shadow: 0 6px 20px rgba(2, 132, 199, 0.4);
+            transform: translateY(-1px);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0284c7;
+        }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row min-h-screen text-slate-800">
+
+    <!-- Notification Toast Container -->
+    <div id="toast-container" class="fixed top-5 left-5 z-50 flex flex-col gap-3"></div>
+
+    <!-- Mobile Header -->
+    <header class="md:hidden glass-panel flex items-center justify-between p-4 sticky top-0 z-40">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-blue-600 flex items-center justify-center font-bold text-xl text-white shadow-md">
+                M
+            </div>
+            <div>
+                <h1 class="font-bold text-lg text-slate-900 font-tajawal leading-tight">Monty Go <span class="text-sky-600">SDN</span></h1>
+                <p class="text-xs text-slate-500">شرائح أعمال زين</p>
+            </div>
+        </div>
+        <button id="mobile-menu-btn" class="text-slate-700 text-2xl focus:outline-none">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+    </header>
+
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar" class="hidden md:flex flex-col w-full md:w-64 glass-panel p-5 sticky top-0 h-auto md:h-screen z-30 shrink-0 transition-all duration-300">
+        <!-- Logo -->
+        <div class="hidden md:flex items-center gap-3 mb-8 px-2">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-500 to-blue-600 flex items-center justify-center font-extrabold text-2xl text-white shadow-lg shadow-sky-500/20">
+                M
+            </div>
+            <div>
+                <h1 class="font-bold text-xl text-slate-900 font-tajawal tracking-wide">Monty Go <span class="text-sky-600">SDN</span></h1>
+                <span class="inline-block px-2 py-0.5 text-[10px] bg-sky-100 text-sky-700 font-semibold rounded-full border border-sky-200">إدارة شرائح زين</span>
+            </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="flex flex-col gap-2 flex-grow">
+            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-slate-600 hover:text-sky-600 hover:bg-white/80 transition-all text-right w-full">
+                <i class="fa-solid fa-chart-pie text-sky-500 w-6 text-center text-lg"></i>
+                <span>لوحة التحكم</span>
+            </button>
+            <button onclick="switchTab('inventory')" id="nav-inventory" class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-slate-600 hover:text-sky-600 hover:bg-white/80 transition-all text-right w-full">
+                <i class="fa-solid fa-sim-card text-sky-500 w-6 text-center text-lg"></i>
+                <span>إدارة المخزن</span>
+            </button>
+            <button onclick="switchTab('sales')" id="nav-sales" class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-slate-600 hover:text-sky-600 hover:bg-white/80 transition-all text-right w-full">
+                <i class="fa-solid fa-cart-shopping text-sky-500 w-6 text-center text-lg"></i>
+                <span>تسجيل بيعة جديدة</span>
+            </button>
+            <button onclick="switchTab('treasury')" id="nav-treasury" class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-slate-600 hover:text-sky-600 hover:bg-white/80 transition-all text-right w-full">
+                <i class="fa-solid fa-vault text-sky-500 w-6 text-center text-lg"></i>
+                <span>الخزنة والمالية</span>
+            </button>
+            <button onclick="switchTab('debts')" id="nav-debts" class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-slate-600 hover:text-sky-600 hover:bg-white/80 transition-all text-right w-full">
+                <i class="fa-solid fa-hand-holding-dollar text-sky-500 w-6 text-center text-lg"></i>
+                <span>الديون المستحقة</span>
+            </button>
+        </nav>
+
+        <!-- System Connection Status -->
+        <div class="mt-auto pt-4 border-t border-slate-200 text-xs text-slate-500 flex items-center justify-between px-2">
+            <span class="flex items-center gap-2">
+                <span id="db-status-dot" class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></span>
+                <span id="db-status-text">جاري الاتصال...</span>
+            </span>
+            <span class="text-sky-600 font-bold">Zain Biz</span>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow p-4 md:p-8 overflow-y-auto">
+
+        <!-- TAB 1: DASHBOARD -->
+        <section id="tab-dashboard" class="tab-content flex flex-col gap-6">
+            <!-- Header -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold font-tajawal text-slate-900">نظرة عامة على النشاط</h2>
+                    <p class="text-slate-500 text-sm mt-1">ملخص مبيعات الشرائح، الخزنة، والديون القائمة</p>
+                </div>
+                <button onclick="switchTab('sales')" class="glow-button px-5 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 text-sm self-start md:self-auto">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>إضافة بيعة جديدة</span>
+                </button>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Active SIMs -->
+                <div class="glass-card p-5 rounded-2xl flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-sky-600 font-semibold mb-1">الشرائح النشطة (المتاحة)</p>
+                        <h3 id="stat-active-sims" class="text-3xl font-extrabold text-slate-900">0</h3>
+                        <p class="text-[11px] text-slate-500 mt-1">جاهزة للبيع المباشر</p>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-sky-50 border border-sky-200 flex items-center justify-center text-sky-600 text-xl">
+                        <i class="fa-solid fa-signal"></i>
+                    </div>
+                </div>
+
+                <!-- Sold SIMs -->
+                <div class="glass-card p-5 rounded-2xl flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-purple-600 font-semibold mb-1">إجمالي الشرائح المباعة</p>
+                        <h3 id="stat-sold-sims" class="text-3xl font-extrabold text-slate-900">0</h3>
+                        <p class="text-[11px] text-slate-500 mt-1">عبر النظام</p>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-purple-50 border border-purple-200 flex items-center justify-center text-purple-600 text-xl">
+                        <i class="fa-solid fa-check-circle"></i>
+                    </div>
+                </div>
+
+                <!-- Treasury Balance -->
+                <div class="glass-card p-5 rounded-2xl flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-emerald-600 font-semibold mb-1">رصيد الخزنة الحالي</p>
+                        <h3 id="stat-treasury-balance" class="text-2xl font-extrabold text-emerald-600">0.00 SDG</h3>
+                        <p class="text-[11px] text-slate-500 mt-1">السيولة النقدية المتاحة</p>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 text-xl">
+                        <i class="fa-solid fa-wallet"></i>
+                    </div>
+                </div>
+
+                <!-- Total Debts -->
+                <div class="glass-card p-5 rounded-2xl flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-rose-600 font-semibold mb-1">إجمالي الديون المستحقة</p>
+                        <h3 id="stat-total-debts" class="text-2xl font-extrabold text-rose-600">0.00 SDG</h3>
+                        <p class="text-[11px] text-slate-500 mt-1">مبالغ قائمة عند العملاء</p>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600 text-xl">
+                        <i class="fa-solid fa-receipt"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity Tables & Overview -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Recent Transactions -->
+                <div class="glass-panel p-5 rounded-2xl">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-bold text-lg text-slate-900 font-tajawal flex items-center gap-2">
+                            <i class="fa-solid fa-history text-sky-600"></i> آخر العمليات في الخزنة
+                        </h3>
+                        <button onclick="switchTab('treasury')" class="text-xs text-sky-600 font-semibold hover:underline">عرض الكل</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-right text-slate-700">
+                            <thead class="text-xs uppercase bg-slate-100/80 text-sky-800">
+                                <tr>
+                                    <th class="px-3 py-2 rounded-r-lg">النوع</th>
+                                    <th class="px-3 py-2">المبلغ</th>
+                                    <th class="px-3 py-2">البيان/الملاحظة</th>
+                                    <th class="px-3 py-2 rounded-l-lg">التاريخ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashboard-recent-transactions" class="divide-y divide-slate-100">
+                                <tr><td colspan="4" class="text-center py-4 text-slate-400">جاري تحميل البيانات...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Top Debtors Quick List -->
+                <div class="glass-panel p-5 rounded-2xl">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-bold text-lg text-slate-900 font-tajawal flex items-center gap-2">
+                            <i class="fa-solid fa-user-clock text-rose-500"></i> أكثر الديون إلحاحاً
+                        </h3>
+                        <button onclick="switchTab('debts')" class="text-xs text-sky-600 font-semibold hover:underline">إدارة الديون</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-right text-slate-700">
+                            <thead class="text-xs uppercase bg-rose-50 text-rose-800">
+                                <tr>
+                                    <th class="px-3 py-2 rounded-r-lg">العميل</th>
+                                    <th class="px-3 py-2">المبلغ المتبقي</th>
+                                    <th class="px-3 py-2 rounded-l-lg text-center">إجراء سداد</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashboard-urgent-debts" class="divide-y divide-slate-100">
+                                <tr><td colspan="3" class="text-center py-4 text-slate-400">جاري تحميل البيانات...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: INVENTORY MANAGEMENT -->
+        <section id="tab-inventory" class="tab-content hidden flex flex-col gap-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold font-tajawal text-slate-900">إدارة المخزن والشرائح</h2>
+                    <p class="text-slate-500 text-sm mt-1">إضافة الشرائح للمخزن وتغيير حالاتها (نشطة/غير نشطة)</p>
+                </div>
+                <button onclick="openAddSimModal()" class="glow-button px-5 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-solid fa-plus-circle"></i>
+                    <span>إضافة شرائح جديدة</span>
+                </button>
+            </div>
+
+            <!-- Filter Controls -->
+            <div class="glass-panel p-4 rounded-xl flex flex-wrap gap-4 items-center justify-between">
+                <div class="flex items-center gap-2 w-full sm:w-auto">
+                    <input type="text" id="inventory-search" placeholder="بحث برقم الشريحة أو السيريال..." 
+                        class="bg-white/80 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-sky-500 shadow-sm w-full sm:w-64"
+                        oninput="renderInventoryTable()">
+                </div>
+                <div class="flex items-center gap-2 w-full sm:w-auto">
+                    <span class="text-xs text-slate-500 font-semibold">تصفية حسب الحالة:</span>
+                    <select id="inventory-filter-status" onchange="renderInventoryTable()" class="bg-white/80 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:border-sky-500 shadow-sm">
+                        <option value="ALL">الكل</option>
+                        <option value="ACTIVE" selected>النشطة (المتاحة)</option>
+                        <option value="INACTIVE">غير النشطة</option>
+                        <option value="SOLD">المباعة</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Inventory Table -->
+            <div class="glass-panel rounded-2xl overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-right text-slate-700">
+                        <thead class="text-xs uppercase bg-slate-100/90 text-sky-900 font-bold">
+                            <tr>
+                                <th class="px-4 py-3">رقم الشريحة / السيريال</th>
+                                <th class="px-4 py-3">التكلفة / السعر الأساسي</th>
+                                <th class="px-4 py-3">الحالة</th>
+                                <th class="px-4 py-3">تاريخ الإضافة</th>
+                                <th class="px-4 py-3 text-center">العمليات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventory-table-body" class="divide-y divide-slate-100">
+                            <tr><td colspan="5" class="text-center py-6 text-slate-400">جاري تحميل البيانات...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: SALES MANAGEMENT -->
+        <section id="tab-sales" class="tab-content hidden flex flex-col gap-6">
+            <div>
+                <h2 class="text-2xl md:text-3xl font-bold font-tajawal text-slate-900">تسجيل عملية بيع جديدة</h2>
+                <p class="text-slate-500 text-sm mt-1">دعم البيع الفردي أو البيع بالجملة (إجمالي) مع الإضافة التلقائية للخزنة والديون</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Left: Sale Form -->
+                <div class="lg:col-span-2 glass-panel p-6 rounded-2xl space-y-6">
+                    <!-- Sale Type Selector -->
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">نوع البيع</label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <button type="button" id="type-single-btn" onclick="setSaleType('SINGLE')" 
+                                class="py-3 px-4 rounded-xl border border-sky-500 bg-sky-50 text-sky-700 font-bold flex items-center justify-center gap-2 shadow-sm">
+                                <i class="fa-solid fa-sim-card"></i> بيع فردي
+                            </button>
+                            <button type="button" id="type-bulk-btn" onclick="setSaleType('BULK')" 
+                                class="py-3 px-4 rounded-xl border border-slate-200 bg-white/60 text-slate-500 font-bold flex items-center justify-center gap-2 hover:border-sky-300">
+                                <i class="fa-solid fa-layer-group"></i> بيع بالجملة (إجمالي)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- SINGLE SALE FIELDS -->
+                    <div id="single-sale-fields" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">اختر الشريحة النشطة *</label>
+                            <select id="sale-sim-select" class="w-full bg-white/90 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-sky-500 shadow-sm">
+                                <option value="">-- اختر شريحة نشطة من المخزن --</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">الرقم الوطني (اختياري)</label>
+                            <input type="text" id="sale-national-id" placeholder="أدخل الرقم الوطني للمشتري" class="w-full bg-white/90 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-sky-500 shadow-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">سعر البيع النهائي (SDG) *</label>
+                            <input type="number" id="sale-single-price" placeholder="مثال: 5000" class="w-full bg-white/90 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-sky-500 shadow-sm">
+                        </div>
+                    </div>
+
+                    <!-- BULK SALE FIELDS -->
+                    <div id="bulk-sale-fields" class="space-y-4 hidden">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">عدد الشرائح المطلوب بيعها *</label>
+                            <input type="number" id="sale-bulk-count" placeholder="مثال: 10" min="1" class="w-full bg-white/90 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-sky-500 shadow-sm">
+                            <span class="text-[11px] text-sky-600 font-semibold mt-1 block">الشرائح النشطة المتاحة حالياً: <strong id="bulk-available-count">0</strong></span>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">السعر الإجمالي المتفق عليه (SDG) *</label>
+                            <input type="number" id="sale-bulk-price" placeholder="مثال: 45000" class="w-full bg-white/90 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-sky-500 shadow-sm">
+                        </div>
+                    </div>
+
+                    <hr class="border-slate-200">
+
+                    <!-- PAYMENT STATUS & CUSTOMER INFO -->
+                    <div class="space-y-4">
+                        <h4 class="font-bold text-sm text-sky-800">تفاصيل الدفع والتسديد</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">اسم العميل / المشتري *</label>
+                                <input type="text" id="sale-customer-name" placeholder="اسم العميل الكامل" class="w-full bg-white/90 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-sky-500 shadow-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">حالة الدفع *</label>
+                                <select id="sale-payment-type" onchange="toggleDebtInput()" class="w-full bg-white/90 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-sky-500 shadow-sm">
+                                    <option value="FULL">مدفوع بالكامل (كاش)</option>
+                                    <option value="PARTIAL">دفع جزئي / آجل (تسجيل دين)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- PARTIAL PAYMENT / DEBT AMOUNT FIELD -->
+                        <div id="debt-amount-container" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-rose-50 border border-rose-200">
+                            <div>
+                                <label class="block text-xs font-semibold text-rose-800 mb-1">المبلغ المدفوع كاش الآن (SDG)</label>
+                                <input type="number" id="sale-paid-amount" placeholder="0" oninput="calculateRemainingDebt()" class="w-full bg-white border border-rose-300 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none shadow-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-rose-800 mb-1">المبلغ المتبقي (دين مستحق)</label>
+                                <input type="number" id="sale-remaining-debt" readonly value="0" class="w-full bg-rose-100/50 border border-rose-300 rounded-xl px-4 py-2.5 text-sm text-rose-700 font-bold focus:outline-none">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button onclick="processSaleSubmit()" class="w-full glow-button py-3.5 rounded-xl font-extrabold text-base flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>إتمام بيع الشرائح وتسجيل المالية</span>
+                    </button>
+                </div>
+
+                <!-- Right: Information Box -->
+                <div class="glass-panel p-6 rounded-2xl flex flex-col justify-between space-y-4">
+                    <div>
+                        <h3 class="font-bold text-lg text-slate-900 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-lightbulb text-amber-500"></i> ملاحظات الإدارة
+                        </h3>
+                        <ul class="text-xs text-slate-600 space-y-3 list-disc list-inside leading-relaxed">
+                            <li>فقط الشرائح المعلمة بـ <span class="text-emerald-600 font-bold">"نشطة"</span> هي التي تظهر في قائمة البيع.</li>
+                            <li>تخصم الشرائح المباعة تلقائياً من المخزن المتاح وتتحول حالتها إلى <span class="text-slate-500 font-bold">"مباعة"</span>.</li>
+                            <li>يُحول أي مبلغ كاش مدفوع مباشرة إلى <span class="text-sky-600 font-bold">الخزنة</span>.</li>
+                            <li>إذا كان البيع غير مدفوع بالكامل، يتم تدوين الباقي تلقائياً في جدول <span class="text-rose-600 font-bold">الديون المستحقة</span> باسم العميل.</li>
+                        </ul>
+                    </div>
+
+                    <div class="p-4 rounded-xl bg-white/80 border border-sky-100 text-center shadow-sm">
+                        <p class="text-xs text-slate-500">شركة Monty Go SDN</p>
+                        <p class="text-sm font-bold text-sky-600 font-tajawal mt-1">تحديث فورى عبر السحابة</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: TREASURY & CASH FLOW -->
+        <section id="tab-treasury" class="tab-content hidden flex flex-col gap-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold font-tajawal text-slate-900">الخزنة والمالية</h2>
+                    <p class="text-slate-500 text-sm mt-1">متابعة الإيرادات وتثبيت المصروفات أو خصومات شراء الشرائح الجديدة</p>
+                </div>
+                <button onclick="openWithdrawModal()" class="bg-rose-600 hover:bg-rose-500 text-white font-bold px-5 py-2.5 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-solid fa-minus-circle"></i>
+                    <span>خصم / منصرف من الخزنة</span>
+                </button>
+            </div>
+
+            <!-- Treasury Balance Card -->
+            <div class="glass-panel p-6 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-6 border-r-4 border-r-sky-500">
+                <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center text-3xl border border-sky-200">
+                        <i class="fa-solid fa-vault"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-500 font-semibold">الرصيد النقدي الحالي بالخزنة</span>
+                        <h3 id="treasury-page-balance" class="text-3xl md:text-4xl font-extrabold text-slate-900">0.00 SDG</h3>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <div class="text-center px-4 py-2 rounded-xl bg-white/80 border border-slate-200 shadow-sm">
+                        <span class="text-[11px] text-emerald-600 font-semibold">إجمالي الواردات</span>
+                        <p id="treasury-total-in" class="text-base font-bold text-emerald-600">0.00</p>
+                    </div>
+                    <div class="text-center px-4 py-2 rounded-xl bg-white/80 border border-slate-200 shadow-sm">
+                        <span class="text-[11px] text-rose-600 font-semibold">إجمالي المنصرفات</span>
+                        <p id="treasury-total-out" class="text-base font-bold text-rose-600">0.00</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Treasury Ledger Table -->
+            <div class="glass-panel rounded-2xl overflow-hidden">
+                <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+                    <h3 class="font-bold text-slate-900 font-tajawal text-base">سجل الحركة المالية للخزنة</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-right text-slate-700">
+                        <thead class="text-xs uppercase bg-slate-100/90 text-sky-900 font-bold">
+                            <tr>
+                                <th class="px-4 py-3">نوع الحركة</th>
+                                <th class="px-4 py-3">المبلغ (SDG)</th>
+                                <th class="px-4 py-3">البيان / السبب والملاحظات</th>
+                                <th class="px-4 py-3">التاريخ والوقت</th>
+                            </tr>
+                        </thead>
+                        <tbody id="treasury-table-body" class="divide-y divide-slate-100">
+                            <tr><td colspan="4" class="text-center py-6 text-slate-400">جاري تحميل المعاملات...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 5: DEBTS TRACKER -->
+        <section id="tab-debts" class="tab-content hidden flex flex-col gap-6">
+            <div>
+                <h2 class="text-2xl md:text-3xl font-bold font-tajawal text-slate-900">الديون المستحقة</h2>
+                <p class="text-slate-500 text-sm mt-1">متابعة المبالغ المتبقية لدى العملاء وإمكانية تحصيل السداد الجزئي أو الكلي</p>
+            </div>
+
+            <!-- Debts Table -->
+            <div class="glass-panel rounded-2xl overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-right text-slate-700">
+                        <thead class="text-xs uppercase bg-rose-50 text-rose-900 font-bold">
+                            <tr>
+                                <th class="px-4 py-3">اسم العميل</th>
+                                <th class="px-4 py-3">المبلغ الكلي للدين</th>
+                                <th class="px-4 py-3">المبلغ المسدد</th>
+                                <th class="px-4 py-3">المبلغ المتبقي</th>
+                                <th class="px-4 py-3">تاريخ إنشاء الدين</th>
+                                <th class="px-4 py-3 text-center">إجراء سداد</th>
+                            </tr>
+                        </thead>
+                        <tbody id="debts-table-body" class="divide-y divide-slate-100">
+                            <tr><td colspan="6" class="text-center py-6 text-slate-400">جاري تحميل سجل الديون...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL 1: ADD NEW SIMs -->
+    <div id="add-sim-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/30 backdrop-blur-md hidden">
+        <div class="glass-panel w-full max-w-lg p-6 rounded-2xl border border-white space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="font-bold text-lg text-slate-900 font-tajawal">إضافة شرائح جديدة للمخزن</h3>
+                <button onclick="closeAddSimModal()" class="text-slate-400 hover:text-slate-700 text-lg"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">رقم الشريحة / السيريال *</label>
+                    <input type="text" id="modal-sim-serial" placeholder="أدخل رقم الشريحة أو السيريال" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-sky-500 shadow-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">التكلفة / السعر الأساسي (SDG)</label>
+                    <input type="number" id="modal-sim-cost" placeholder="0.00" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-sky-500 shadow-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">حالة الشريحة الأولية *</label>
+                    <select id="modal-sim-status" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-sky-500 shadow-sm">
+                        <option value="ACTIVE" selected>نشطة (جاهزة للبيع)</option>
+                        <option value="INACTIVE">غير نشطة</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+                <button onclick="closeAddSimModal()" class="px-4 py-2 rounded-xl text-slate-600 text-sm hover:bg-slate-100">إلغاء</button>
+                <button onclick="submitAddSim()" class="glow-button px-5 py-2 rounded-xl font-bold text-sm">حفظ بالمخزن</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: WITHDRAW FROM TREASURY -->
+    <div id="withdraw-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/30 backdrop-blur-md hidden">
+        <div class="glass-panel w-full max-w-lg p-6 rounded-2xl border border-rose-200 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="font-bold text-lg text-rose-700 font-tajawal">سحب / خصم من الخزنة</h3>
+                <button onclick="closeWithdrawModal()" class="text-slate-400 hover:text-slate-700 text-lg"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">المبلغ المراد خصمه (SDG) *</label>
+                    <input type="number" id="modal-withdraw-amount" placeholder="مثال: 15000" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-rose-500 shadow-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">سبب الخصم / ملاحظات إجبارية *</label>
+                    <textarea id="modal-withdraw-note" rows="3" placeholder="مثال: شراء شرائح جديدة من الشركة، أو منصرف نثريات..." class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-rose-500 shadow-sm"></textarea>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+                <button onclick="closeWithdrawModal()" class="px-4 py-2 rounded-xl text-slate-600 text-sm hover:bg-slate-100">إلغاء</button>
+                <button onclick="submitWithdraw()" class="bg-rose-600 hover:bg-rose-500 text-white font-bold px-5 py-2 rounded-xl text-sm shadow-md">تأكيد الخصم</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: PAY DEBT -->
+    <div id="pay-debt-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/30 backdrop-blur-md hidden">
+        <div class="glass-panel w-full max-w-lg p-6 rounded-2xl border border-white space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="font-bold text-lg text-slate-900 font-tajawal">تسديد دين للعميل: <span id="pay-debt-customer-name" class="text-sky-600"></span></h3>
+                <button onclick="closePayDebtModal()" class="text-slate-400 hover:text-slate-700 text-lg"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <input type="hidden" id="pay-debt-id">
+            <div class="space-y-4">
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-center text-xs">
+                    <span>المبلغ المتبقي الحالي:</span>
+                    <strong id="pay-debt-remaining-display" class="text-rose-600 font-bold text-sm">0.00 SDG</strong>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">المبلغ المراد سداده الآن (SDG) *</label>
+                    <input type="number" id="pay-debt-amount" placeholder="أدخل مبلغ السداد" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-sky-500 shadow-sm">
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+                <button onclick="closePayDebtModal()" class="px-4 py-2 rounded-xl text-slate-600 text-sm hover:bg-slate-100">إلغاء</button>
+                <button onclick="submitPayDebt()" class="glow-button px-5 py-2 rounded-xl font-bold text-sm">تأكيد تحصيل الدين</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK Setup Module -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { 
+            getFirestore, collection, addDoc, getDocs, onSnapshot, 
+            doc, updateDoc, deleteDoc, runTransaction, serverTimestamp, query, orderBy 
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBMM9yXT-LJfWPTv0AD2iD2rC2rnenYYik",
+            authDomain: "crew-397b4.firebaseapp.com",
+            projectId: "crew-397b4",
+            storageBucket: "crew-397b4.firebasestorage.app",
+            messagingSenderId: "402724763653",
+            appId: "1:402724763653:web:bbe671c78ad9b77b2c846c",
+            measurementId: "G-DHSN624VNK"
+        };
+
+        // Initialize Firebase & Firestore
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Make Firestore services available globally for UI functions
+        window.db = db;
+        window.fs = {
+            collection, addDoc, getDocs, onSnapshot, doc, updateDoc, deleteDoc, runTransaction, serverTimestamp
+        };
+
+        // Connection Indicator Status Update
+        document.getElementById('db-status-dot').className = "w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse";
+        document.getElementById('db-status-text').textContent = "متصل بالسحابة";
+
+        // Start Realtime Listeners
+        initRealtimeData();
+    </script>
+
+    <!-- Application Script Logic -->
+    <script>
+        // Global App State
+        let state = {
+            sims: [],
+            treasury: [],
+            debts: [],
+            currentSaleType: 'SINGLE' // 'SINGLE' or 'BULK'
+        };
+
+        // Navigation Management
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.remove('bg-white/10', 'text-white', 'border-r-4', 'border-cyan-400');
+            });
+
+            const activeTab = document.getElementById(`tab-${tabId}`);
+            if (activeTab) activeTab.classList.remove('hidden');
+
+            const activeNav = document.getElementById(`nav-${tabId}`);
+            if (activeNav) {
+                activeNav.classList.add('bg-white/10', 'text-white', 'border-r-4', 'border-cyan-400');
+            }
+
+            // Close mobile menu if open
+            const sidebar = document.getElementById('sidebar');
+            if (!sidebar.classList.contains('hidden') && window.innerWidth < 768) {
+                sidebar.classList.add('hidden');
+            }
+        }
+
+        // Toggle Mobile Navigation
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('hidden');
+        });
+
+        // Toast Notification System
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            const bgColor = type === 'success' ? 'bg-emerald-50 border-emerald-300 text-emerald-800' : 
+                            type === 'error' ? 'bg-rose-50 border-rose-300 text-rose-800' : 'bg-sky-50 border-sky-300 text-sky-800';
+            
+            toast.className = `glass-panel px-4 py-3 rounded-xl border ${bgColor} text-sm shadow-xl flex items-center gap-3 animate-fade-in`;
+            toast.innerHTML = `
+                <i class="fa-solid ${type === 'success' ? 'fa-check-circle text-emerald-600' : 'fa-exclamation-circle text-rose-600'}"></i>
+                <span class="font-semibold">${message}</span>
+            `;
+
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.remove();
+            }, 3500);
+        }
+
+        // Realtime Data Subscription
+        function initRealtimeData() {
+            // Listen to SIMs
+            window.fs.onSnapshot(window.fs.collection(window.db, "sims"), (snapshot) => {
+                state.sims = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderDashboardStats();
+                renderInventoryTable();
+                populateSimSelectOptions();
+            }, (error) => console.error("Error SIMs:", error));
+
+            // Listen to Treasury Transactions
+            window.fs.onSnapshot(window.fs.collection(window.db, "treasury"), (snapshot) => {
+                state.treasury = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderDashboardStats();
+                renderTreasuryTable();
+            }, (error) => console.error("Error Treasury:", error));
+
+            // Listen to Debts
+            window.fs.onSnapshot(window.fs.collection(window.db, "debts"), (snapshot) => {
+                state.debts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderDashboardStats();
+                renderDebtsTable();
+            }, (error) => console.error("Error Debts:", error));
+
+            // Default active tab
+            switchTab('dashboard');
+        }
+
+        // Dashboard Stats Rendering
+        function renderDashboardStats() {
+            const activeSims = state.sims.filter(s => s.status === 'ACTIVE').length;
+            const soldSims = state.sims.filter(s => s.status === 'SOLD').length;
+
+            // Treasury Balance calculation
+            const totalIn = state.treasury.filter(t => t.type === 'IN').reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+            const totalOut = state.treasury.filter(t => t.type === 'OUT').reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+            const balance = totalIn - totalOut;
+
+            // Total remaining debts
+            const totalDebts = state.debts.reduce((acc, curr) => acc + (Number(curr.remainingAmount) || 0), 0);
+
+            // Update DOM Elements
+            document.getElementById('stat-active-sims').textContent = activeSims;
+            document.getElementById('stat-sold-sims').textContent = soldSims;
+            document.getElementById('stat-treasury-balance').textContent = balance.toLocaleString('ar-SD') + ' SDG';
+            document.getElementById('stat-total-debts').textContent = totalDebts.toLocaleString('ar-SD') + ' SDG';
+
+            // Treasury page balance details
+            document.getElementById('treasury-page-balance').textContent = balance.toLocaleString('ar-SD') + ' SDG';
+            document.getElementById('treasury-total-in').textContent = totalIn.toLocaleString('ar-SD') + ' SDG';
+            document.getElementById('treasury-total-out').textContent = totalOut.toLocaleString('ar-SD') + ' SDG';
+
+            // Bulk SIM count preview
+            document.getElementById('bulk-available-count').textContent = activeSims;
+
+            // Render Recent Activities on Dashboard
+            renderRecentDashboardTables();
+        }
+
+        function renderRecentDashboardTables() {
+            // Recent Transactions
+            const recentT = [...state.treasury].sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0)).slice(0, 5);
+            const tBody = document.getElementById('dashboard-recent-transactions');
+            tBody.innerHTML = recentT.length === 0 ? 
+                `<tr><td colspan="4" class="text-center py-4 text-slate-500">لا توجد معاملات بعد</td></tr>` :
+                recentT.map(t => `
+                    <tr>
+                        <td class="px-3 py-2 font-medium ${t.type === 'IN' ? 'text-emerald-400' : 'text-rose-400'}">
+                            ${t.type === 'IN' ? 'إيراد / توريد' : 'خصم / منصرف'}
+                        </td>
+                        <td class="px-3 py-2 font-bold">${Number(t.amount).toLocaleString()} SDG</td>
+                        <td class="px-3 py-2 text-xs text-slate-300">${t.note || '-'}</td>
+                        <td class="px-3 py-2 text-xs text-slate-400">${t.createdAt?.seconds ? new Date(t.createdAt.seconds * 1000).toLocaleDateString('ar-SD') : 'الآن'}</td>
+                    </tr>
+                `).join('');
+
+            // Urgent Debts
+            const urgentD = state.debts.filter(d => d.remainingAmount > 0).sort((a,b) => b.remainingAmount - a.remainingAmount).slice(0, 5);
+            const dBody = document.getElementById('dashboard-urgent-debts');
+            dBody.innerHTML = urgentD.length === 0 ? 
+                `<tr><td colspan="3" class="text-center py-4 text-slate-500">لا توجد ديون مستحقة حالياً</td></tr>` :
+                urgentD.map(d => `
+                    <tr>
+                        <td class="px-3 py-2 font-semibold text-white">${d.customerName}</td>
+                        <td class="px-3 py-2 font-bold text-rose-300">${Number(d.remainingAmount).toLocaleString()} SDG</td>
+                        <td class="px-3 py-2 text-center">
+                            <button onclick="openPayDebtModal('${d.id}', '${d.customerName}', ${d.remainingAmount})" class="px-3 py-1 bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500 hover:text-slate-950 rounded-lg text-xs transition-all font-bold">
+                                سداد
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+        }
+
+        // Inventory Management Logic
+        function renderInventoryTable() {
+            const tbody = document.getElementById('inventory-table-body');
+            const searchVal = document.getElementById('inventory-search').value.trim().toLowerCase();
+            const filterStatus = document.getElementById('inventory-filter-status').value;
+
+            let filtered = state.sims.filter(sim => {
+                const matchSearch = sim.serialNumber.toLowerCase().includes(searchVal);
+                const matchStatus = filterStatus === 'ALL' || sim.status === filterStatus;
+                return matchSearch && matchStatus;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-500">لا توجد شرائح مطابقة للبحث</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(sim => {
+                let statusBadge = sim.status === 'ACTIVE' 
+                    ? `<span class="px-2.5 py-1 text-xs rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">نشطة (متاحة)</span>`
+                    : sim.status === 'INACTIVE'
+                    ? `<span class="px-2.5 py-1 text-xs rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">غير نشطة</span>`
+                    : `<span class="px-2.5 py-1 text-xs rounded-full bg-purple-500/20 text-slate-400 border border-purple-500/30">مباعة</span>`;
+
+                return `
+                    <tr class="hover:bg-white/5 transition-all">
+                        <td class="px-4 py-3 font-bold text-white font-mono">${sim.serialNumber}</td>
+                        <td class="px-4 py-3 text-cyan-300 font-semibold">${Number(sim.cost || 0).toLocaleString()} SDG</td>
+                        <td class="px-4 py-3">${statusBadge}</td>
+                        <td class="px-4 py-3 text-xs text-slate-400">${sim.createdAt?.seconds ? new Date(sim.createdAt.seconds * 1000).toLocaleDateString('ar-SD') : 'الآن'}</td>
+                        <td class="px-4 py-3 text-center">
+                            ${sim.status !== 'SOLD' ? `
+                                <button onclick="toggleSimStatus('${sim.id}', '${sim.status}')" class="px-3 py-1 text-xs rounded-lg border border-white/10 hover:border-cyan-400 text-slate-300 hover:text-white transition-all">
+                                    تغيير إلى ${sim.status === 'ACTIVE' ? 'غير نشطة' : 'نشطة'}
+                                </button>
+                            ` : `<span class="text-xs text-slate-500">مكتملة</span>`}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Add SIM Modal Controls
+        function openAddSimModal() {
+            document.getElementById('add-sim-modal').classList.remove('hidden');
+        }
+        function closeAddSimModal() {
+            document.getElementById('add-sim-modal').classList.add('hidden');
+            document.getElementById('modal-sim-serial').value = '';
+            document.getElementById('modal-sim-cost').value = '';
+        }
+
+        async function submitAddSim() {
+            const serial = document.getElementById('modal-sim-serial').value.trim();
+            const cost = Number(document.getElementById('modal-sim-cost').value) || 0;
+            const status = document.getElementById('modal-sim-status').value;
+        // Navigation Management
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.remove('bg-white', 'text-sky-600', 'shadow-sm', 'border-r-4', 'border-sky-500');
+            });
+
+            const activeTab = document.getElementById(`tab-${tabId}`);
+            if (activeTab) activeTab.classList.remove('hidden');
+
+            const activeNav = document.getElementById(`nav-${tabId}`);
+            if (activeNav) {
+                activeNav.classList.add('bg-white', 'text-sky-600', 'shadow-sm', 'border-r-4', 'border-sky-500');
+            }
+
+            // Close mobile menu if open
+            const sidebar = document.getElementById('sidebar');
+            if (!sidebar.classList.contains('hidden') && window.innerWidth < 768) {
+                sidebar.classList.add('hidden');
+            }
+        }
+        // Inventory Management Logic
+        function renderInventoryTable() {
+            const tbody = document.getElementById('inventory-table-body');
+            const searchVal = document.getElementById('inventory-search').value.trim().toLowerCase();
+            const filterStatus = document.getElementById('inventory-filter-status').value;
+
+            let filtered = state.sims.filter(sim => {
+                const matchSearch = sim.serialNumber.toLowerCase().includes(searchVal);
+                const matchStatus = filterStatus === 'ALL' || sim.status === filterStatus;
+                return matchSearch && matchStatus;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-400">لا توجد شرائح مطابقة للبحث</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(sim => {
+                let statusBadge = sim.status === 'ACTIVE' 
+                    ? `<span class="px-2.5 py-1 text-xs rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200 font-semibold">نشطة (متاحة)</span>`
+                    : sim.status === 'INACTIVE'
+                    ? `<span class="px-2.5 py-1 text-xs rounded-full bg-amber-100 text-amber-700 border border-amber-200 font-semibold">غير نشطة</span>`
+                    : `<span class="px-2.5 py-1 text-xs rounded-full bg-slate-100 text-slate-500 border border-slate-200 font-semibold">مباعة</span>`;
+
+                return `
+                    <tr class="hover:bg-white/60 transition-all">
+                        <td class="px-4 py-3 font-bold text-slate-900 font-mono">${sim.serialNumber}</td>
+                        <td class="px-4 py-3 text-sky-700 font-semibold">${Number(sim.cost || 0).toLocaleString()} SDG</td>
+                        <td class="px-4 py-3">${statusBadge}</td>
+                        <td class="px-4 py-3 text-xs text-slate-500">${sim.createdAt?.seconds ? new Date(sim.createdAt.seconds * 1000).toLocaleDateString('ar-SD') : 'الآن'}</td>
+                        <td class="px-4 py-3 text-center">
+                            ${sim.status !== 'SOLD' ? `
+                                <button onclick="toggleSimStatus('${sim.id}', '${sim.status}')" class="px-3 py-1 text-xs rounded-lg border border-slate-200 hover:border-sky-500 text-slate-600 hover:text-sky-700 transition-all font-semibold bg-white/80 shadow-sm">
+                                    تغيير إلى ${sim.status === 'ACTIVE' ? 'غير نشطة' : 'نشطة'}
+                                </button>
+                            ` : `<span class="text-xs text-slate-400">مكتملة</span>`}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        }
+
+        // Sales Logic Setup
+        function populateSimSelectOptions() {
+            const select = document.getElementById('sale-sim-select');
+            const activeSims = state.sims.filter(s => s.status === 'ACTIVE');
+            
+            select.innerHTML = '<option value="">-- اختر شريحة نشطة من المخزن --</option>' +
+                activeSims.map(s => `<option value="${s.id}">${s.serialNumber} (التكلفة: ${s.cost} SDG)</option>`).join('');
+        }
+
+        function setSaleType(type) {
+            state.currentSaleType = type;
+            const singleBtn = document.getElementById('type-single-btn');
+            const bulkBtn = document.getElementById('type-bulk-btn');
+            const singleFields = document.getElementById('single-sale-fields');
+            const bulkFields = document.getElementById('bulk-sale-fields');
+
+            if (type === 'SINGLE') {
+                singleBtn.className = "py-3 px-4 rounded-xl border border-sky-500 bg-sky-50 text-sky-700 font-bold flex items-center justify-center gap-2 shadow-sm";
+                bulkBtn.className = "py-3 px-4 rounded-xl border border-slate-200 bg-white/60 text-slate-500 font-bold flex items-center justify-center gap-2 hover:border-sky-300";
+                singleFields.classList.remove('hidden');
+                bulkFields.classList.add('hidden');
+            } else {
+                bulkBtn.className = "py-3 px-4 rounded-xl border border-sky-500 bg-sky-50 text-sky-700 font-bold flex items-center justify-center gap-2 shadow-sm";
+                singleBtn.className = "py-3 px-4 rounded-xl border border-slate-200 bg-white/60 text-slate-500 font-bold flex items-center justify-center gap-2 hover:border-sky-300";
+                bulkFields.classList.remove('hidden');
+                singleFields.classList.add('hidden');
+            }
+        }
+
+        function toggleDebtInput() {
+            const paymentType = document.getElementById('sale-payment-type').value;
+            const debtContainer = document.getElementById('debt-amount-container');
+            if (paymentType === 'PARTIAL') {
+                debtContainer.classList.remove('hidden');
+                calculateRemainingDebt();
+            } else {
+                debtContainer.classList.add('hidden');
+            }
+        }
+
+        function calculateRemainingDebt() {
+            let totalPrice = 0;
+            if (state.currentSaleType === 'SINGLE') {
+                totalPrice = Number(document.getElementById('sale-single-price').value) || 0;
+            } else {
+                totalPrice = Number(document.getElementById('sale-bulk-price').value) || 0;
+            }
+
+            const paidAmount = Number(document.getElementById('sale-paid-amount').value) || 0;
+            const remaining = Math.max(0, totalPrice - paidAmount);
+            document.getElementById('sale-remaining-debt').value = remaining;
+        }
+
+        // Process Complete Sale (Transaction Safe)
+        async function processSaleSubmit() {
+            const customerName = document.getElementById('sale-customer-name').value.trim();
+            const paymentType = document.getElementById('sale-payment-type').value;
+
+            if (!customerName) {
+                showToast('يرجى إدخال اسم العميل / المشتري', 'error');
+                return;
+            }
+
+            let totalPrice = 0;
+            let paidCash = 0;
+            let remainingDebt = 0;
+            let simsToSell = [];
+
+            if (state.currentSaleType === 'SINGLE') {
+                const simId = document.getElementById('sale-sim-select').value;
+                totalPrice = Number(document.getElementById('sale-single-price').value) || 0;
+
+                if (!simId) {
+                    showToast('يرجى اختيار شريحة نشطة للبيع', 'error');
+                    return;
+                }
+                if (totalPrice <= 0) {
+                    showToast('يرجى تحديد سعر بيع صحيح', 'error');
+                    return;
+                }
+
+                simsToSell.push(simId);
+            } else {
+                // BULK SALE
+                const count = Number(document.getElementById('sale-bulk-count').value) || 0;
+                totalPrice = Number(document.getElementById('sale-bulk-price').value) || 0;
+                const activeSims = state.sims.filter(s => s.status === 'ACTIVE');
+
+                if (count <= 0 || count > activeSims.length) {
+                    showToast(`العدد المطلوب غير متاح. الشرائح النشطة المتوفرة: ${activeSims.length}`, 'error');
+                    return;
+                }
+                if (totalPrice <= 0) {
+                    showToast('يرجى إدخال السعر الإجمالي المتفق عليه للكتلة', 'error');
+                    return;
+                }
+
+                simsToSell = activeSims.slice(0, count).map(s => s.id);
+            }
+
+            if (paymentType === 'FULL') {
+                paidCash = totalPrice;
+                remainingDebt = 0;
+            } else {
+                paidCash = Number(document.getElementById('sale-paid-amount').value) || 0;
+                remainingDebt = Math.max(0, totalPrice - paidCash);
+            }
+
+            try {
+                // Execute sales update
+                for (const simId of simsToSell) {
+                    await window.fs.updateDoc(window.fs.doc(window.db, "sims", simId), {
+                        status: 'SOLD',
+                        soldAt: window.fs.serverTimestamp(),
+                        soldTo: customerName
+                    });
+                }
+
+                // Add Cash to Treasury if paidCash > 0
+                if (paidCash > 0) {
+                    await window.fs.addDoc(window.fs.collection(window.db, "treasury"), {
+                        type: 'IN',
+                        amount: paidCash,
+                        note: `إيراد مبيعات شرائح (${state.currentSaleType === 'SINGLE' ? 'فردي' : 'جملة'}) - العميل: ${customerName}`,
+                        createdAt: window.fs.serverTimestamp()
+                    });
+                }
+
+                // Create Debt entry if remainingDebt > 0
+                if (remainingDebt > 0) {
+                    await window.fs.addDoc(window.fs.collection(window.db, "debts"), {
+                        customerName: customerName,
+                        totalAmount: remainingDebt,
+                        paidAmount: 0,
+                        remainingAmount: remainingDebt,
+                        createdAt: window.fs.serverTimestamp()
+                    });
+                }
+
+                showToast(`تم إتمام عملية البيع بنجاح! عدد الشرائح: ${simsToSell.length}`);
+                
+                // Reset form fields
+                document.getElementById('sale-customer-name').value = '';
+                document.getElementById('sale-national-id').value = '';
+                document.getElementById('sale-single-price').value = '';
+                document.getElementById('sale-bulk-price').value = '';
+                document.getElementById('sale-bulk-count').value = '';
+                document.getElementById('sale-paid-amount').value = '';
+                document.getElementById('sale-remaining-debt').value = '0';
+
+                // Switch back to Dashboard view
+                switchTab('dashboard');
+
+            } catch (err) {
+                console.error("Sale Error:", err);
+                showToast('حدث خطأ أثناء معالجة عملية البيع', 'error');
+            }
+        }
+
+        // Treasury Management Logic
+        function renderTreasuryTable() {
+            const tbody = document.getElementById('treasury-table-body');
+            const sorted = [...state.treasury].sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+            if (sorted.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-slate-500">لا توجد حركات مالية في الخزنة</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = sorted.map(t => `
+                <tr class="hover:bg-white/5 transition-all">
+                    <td class="px-4 py-3 font-semibold ${t.type === 'IN' ? 'text-emerald-400' : 'text-rose-400'}">
+                        ${t.type === 'IN' ? 'وارد (إيراد)' : 'منصرف (خصم)'}
+                    </td>
+                    <td class="px-4 py-3 font-bold text-white">${Number(t.amount).toLocaleString()} SDG</td>
+                    <td class="px-4 py-3 text-slate-300">${t.note || '-'}</td>
+                    <td class="px-4 py-3 text-xs text-slate-400">${t.createdAt?.seconds ? new Date(t.createdAt.seconds * 1000).toLocaleString('ar-SD') : 'الآن'}</td>
+                </tr>
+            `).join('');
+        }
+
+        function openWithdrawModal() {
+            document.getElementById('withdraw-modal').classList.remove('hidden');
+        }
+        function closeWithdrawModal() {
+            document.getElementById('withdraw-modal').classList.add('hidden');
+            document.getElementById('modal-withdraw-amount').value = '';
+            document.getElementById('modal-withdraw-note').value = '';
+        }
+
+        async function submitWithdraw() {
+            const amount = Number(document.getElementById('modal-withdraw-amount').value) || 0;
+            const note = document.getElementById('modal-withdraw-note').value.trim();
+
+            if (amount <= 0) {
+                showToast('يرجى إدخال مبلغ صحيح للخصم', 'error');
+                return;
+            }
+            if (!note) {
+                showToast('سبب الخصم والملاحظة حقل إجباري لتثبيت المنصرف', 'error');
+                return;
+            }
+
+            try {
+                await window.fs.addDoc(window.fs.collection(window.db, "treasury"), {
+                    type: 'OUT',
+                    amount: amount,
+                    note: note,
+                    createdAt: window.fs.serverTimestamp()
+                });
+
+                showToast('تم خصم المبلغ من الخزنة وتسجيل المنصرف بنجاح');
+                closeWithdrawModal();
+            } catch (err) {
+                console.error(err);
+                showToast('فشل عملية الخصم من الخزنة', 'error');
+            }
+        }
+
+        // Debts Management Logic
+        function renderDebtsTable() {
+            const tbody = document.getElementById('debts-table-body');
+            const sorted = [...state.debts].sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+            if (sorted.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-500">لا يوجد سجل ديون حتى الآن</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = sorted.map(d => `
+                <tr class="hover:bg-white/5 transition-all">
+                    <td class="px-4 py-3 font-bold text-white">${d.customerName}</td>
+                    <td class="px-4 py-3 text-slate-300 font-semibold">${Number(d.totalAmount).toLocaleString()} SDG</td>
+                    <td class="px-4 py-3 text-emerald-400 font-semibold">${Number(d.paidAmount || 0).toLocaleString()} SDG</td>
+                    <td class="px-4 py-3 text-rose-300 font-bold">${Number(d.remainingAmount).toLocaleString()} SDG</td>
+                    <td class="px-4 py-3 text-xs text-slate-400">${d.createdAt?.seconds ? new Date(d.createdAt.seconds * 1000).toLocaleDateString('ar-SD') : 'الآن'}</td>
+                    <td class="px-4 py-3 text-center">
+                        ${d.remainingAmount > 0 ? `
+                            <button onclick="openPayDebtModal('${d.id}', '${d.customerName}', ${d.remainingAmount})" class="glow-button px-3 py-1.5 rounded-lg text-slate-950 font-bold text-xs">
+                                تسديد مبلغ
+                            </button>
+                        ` : `<span class="px-2 py-1 text-xs text-emerald-400 bg-emerald-500/20 rounded-md font-bold">مسدد بالكامل</span>`}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openPayDebtModal(debtId, customerName, remaining) {
+            document.getElementById('pay-debt-id').value = debtId;
+            document.getElementById('pay-debt-customer-name').textContent = customerName;
+            document.getElementById('pay-debt-remaining-display').textContent = remaining.toLocaleString() + ' SDG';
+            document.getElementById('pay-debt-modal').classList.remove('hidden');
+        }
+
+        function closePayDebtModal() {
+            document.getElementById('pay-debt-modal').classList.add('hidden');
+            document.getElementById('pay-debt-amount').value = '';
+        }
+
+        async function submitPayDebt() {
+            const debtId = document.getElementById('pay-debt-id').value;
+            const payAmount = Number(document.getElementById('pay-debt-amount').value) || 0;
+
+            const debtDoc = state.debts.find(d => d.id === debtId);
+            if (!debtDoc) return;
+
+            if (payAmount <= 0 || payAmount > debtDoc.remainingAmount) {
+                showToast(`يرجى إدخال مبلغ سداد بين 1 و ${debtDoc.remainingAmount} SDG`, 'error');
+                return;
+            }
+
+            try {
+                const newPaid = (Number(debtDoc.paidAmount) || 0) + payAmount;
+                const newRemaining = debtDoc.remainingAmount - payAmount;
+
+                // 1. Update Debt document
+                await window.fs.updateDoc(window.fs.doc(window.db, "debts", debtId), {
+                    paidAmount: newPaid,
+                    remainingAmount: newRemaining
+                });
+
+                // 2. Deposit into Treasury
+                await window.fs.addDoc(window.fs.collection(window.db, "treasury"), {
+                    type: 'IN',
+                    amount: payAmount,
+                    note: `سداد دين مستحق - العميل: ${debtDoc.customerName}`,
+                    createdAt: window.fs.serverTimestamp()
+                });
+
+                showToast('تم تسديد الدين وإضافة المبلغ إلى الخزنة بنجاح');
+                closePayDebtModal();
+
+            } catch (err) {
+                console.error(err);
+                showToast('حدث خطأ أثناء إجراء السداد', 'error');
+            }
+        }
+    </script>
+</body>
+</html>
