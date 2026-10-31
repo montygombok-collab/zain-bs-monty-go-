@@ -667,7 +667,7 @@
     <!-- Application Script Logic -->
     <script>
         // Global App State
-        window.state = {
+        let state = {
             sims: [],
             treasury: [],
             debts: [],
@@ -675,7 +675,7 @@
         };
 
         // Navigation Management
-        window.switchTab = function(tabId) {
+        function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.nav-item').forEach(el => {
                 el.classList.remove('bg-white/10', 'text-white', 'border-r-4', 'border-cyan-400');
@@ -691,32 +691,26 @@
 
             // Close mobile menu if open
             const sidebar = document.getElementById('sidebar');
-            if (sidebar && !sidebar.classList.contains('hidden') && window.innerWidth < 768) {
+            if (!sidebar.classList.contains('hidden') && window.innerWidth < 768) {
                 sidebar.classList.add('hidden');
             }
-        };
+        }
 
         // Toggle Mobile Navigation
-        document.addEventListener('DOMContentLoaded', () => {
-            const btn = document.getElementById('mobile-menu-btn');
-            if (btn) {
-                btn.addEventListener('click', () => {
-                    const sidebar = document.getElementById('sidebar');
-                    if (sidebar) sidebar.classList.toggle('hidden');
-                });
-            }
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('hidden');
         });
 
         // Toast Notification System
-        window.showToast = function(message, type = 'success') {
+        function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
-            if (!container) return;
             const toast = document.createElement('div');
             
             const bgColor = type === 'success' ? 'bg-emerald-50 border-emerald-300 text-emerald-800' : 
                             type === 'error' ? 'bg-rose-50 border-rose-300 text-rose-800' : 'bg-sky-50 border-sky-300 text-sky-800';
             
-            toast.className = `glass-panel px-4 py-3 rounded-xl border ${bgColor} text-sm shadow-xl flex items-center gap-3`;
+            toast.className = `glass-panel px-4 py-3 rounded-xl border ${bgColor} text-sm shadow-xl flex items-center gap-3 animate-fade-in`;
             toast.innerHTML = `
                 <i class="fa-solid ${type === 'success' ? 'fa-check-circle text-emerald-600' : 'fa-exclamation-circle text-rose-600'}"></i>
                 <span class="font-semibold">${message}</span>
@@ -726,15 +720,13 @@
             setTimeout(() => {
                 toast.remove();
             }, 3500);
-        };
+        }
 
         // Realtime Data Subscription
-        window.initRealtimeData = function() {
-            if (!window.fs || !window.db) return;
-
+        function initRealtimeData() {
             // Listen to SIMs
             window.fs.onSnapshot(window.fs.collection(window.db, "sims"), (snapshot) => {
-                window.state.sims = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                state.sims = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 renderDashboardStats();
                 renderInventoryTable();
                 populateSimSelectOptions();
@@ -742,101 +734,96 @@
 
             // Listen to Treasury Transactions
             window.fs.onSnapshot(window.fs.collection(window.db, "treasury"), (snapshot) => {
-                window.state.treasury = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                state.treasury = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 renderDashboardStats();
                 renderTreasuryTable();
             }, (error) => console.error("Error Treasury:", error));
 
             // Listen to Debts
             window.fs.onSnapshot(window.fs.collection(window.db, "debts"), (snapshot) => {
-                window.state.debts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                state.debts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 renderDashboardStats();
                 renderDebtsTable();
             }, (error) => console.error("Error Debts:", error));
 
             // Default active tab
             switchTab('dashboard');
-        };
+        }
 
         // Dashboard Stats Rendering
-        window.renderDashboardStats = function() {
-            const activeSims = window.state.sims.filter(s => s.status === 'ACTIVE').length;
-            const soldSims = window.state.sims.filter(s => s.status === 'SOLD').length;
+        function renderDashboardStats() {
+            const activeSims = state.sims.filter(s => s.status === 'ACTIVE').length;
+            const soldSims = state.sims.filter(s => s.status === 'SOLD').length;
 
             // Treasury Balance calculation
-            const totalIn = window.state.treasury.filter(t => t.type === 'IN').reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
-            const totalOut = window.state.treasury.filter(t => t.type === 'OUT').reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+            const totalIn = state.treasury.filter(t => t.type === 'IN').reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+            const totalOut = state.treasury.filter(t => t.type === 'OUT').reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
             const balance = totalIn - totalOut;
 
             // Total remaining debts
-            const totalDebts = window.state.debts.reduce((acc, curr) => acc + (Number(curr.remainingAmount) || 0), 0);
+            const totalDebts = state.debts.reduce((acc, curr) => acc + (Number(curr.remainingAmount) || 0), 0);
 
             // Update DOM Elements
-            if (document.getElementById('stat-active-sims')) document.getElementById('stat-active-sims').textContent = activeSims;
-            if (document.getElementById('stat-sold-sims')) document.getElementById('stat-sold-sims').textContent = soldSims;
-            if (document.getElementById('stat-treasury-balance')) document.getElementById('stat-treasury-balance').textContent = balance.toLocaleString('ar-SD') + ' SDG';
-            if (document.getElementById('stat-total-debts')) document.getElementById('stat-total-debts').textContent = totalDebts.toLocaleString('ar-SD') + ' SDG';
+            document.getElementById('stat-active-sims').textContent = activeSims;
+            document.getElementById('stat-sold-sims').textContent = soldSims;
+            document.getElementById('stat-treasury-balance').textContent = balance.toLocaleString('ar-SD') + ' SDG';
+            document.getElementById('stat-total-debts').textContent = totalDebts.toLocaleString('ar-SD') + ' SDG';
 
             // Treasury page balance details
-            if (document.getElementById('treasury-page-balance')) document.getElementById('treasury-page-balance').textContent = balance.toLocaleString('ar-SD') + ' SDG';
-            if (document.getElementById('treasury-total-in')) document.getElementById('treasury-total-in').textContent = totalIn.toLocaleString('ar-SD') + ' SDG';
-            if (document.getElementById('treasury-total-out')) document.getElementById('treasury-total-out').textContent = totalOut.toLocaleString('ar-SD') + ' SDG';
+            document.getElementById('treasury-page-balance').textContent = balance.toLocaleString('ar-SD') + ' SDG';
+            document.getElementById('treasury-total-in').textContent = totalIn.toLocaleString('ar-SD') + ' SDG';
+            document.getElementById('treasury-total-out').textContent = totalOut.toLocaleString('ar-SD') + ' SDG';
 
             // Bulk SIM count preview
-            if (document.getElementById('bulk-available-count')) document.getElementById('bulk-available-count').textContent = activeSims;
+            document.getElementById('bulk-available-count').textContent = activeSims;
 
             // Render Recent Activities on Dashboard
             renderRecentDashboardTables();
-        };
+        }
 
-        window.renderRecentDashboardTables = function() {
+        function renderRecentDashboardTables() {
             // Recent Transactions
-            const recentT = [...window.state.treasury].sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0)).slice(0, 5);
+            const recentT = [...state.treasury].sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0)).slice(0, 5);
             const tBody = document.getElementById('dashboard-recent-transactions');
-            if (tBody) {
-                tBody.innerHTML = recentT.length === 0 ? 
-                    `<tr><td colspan="4" class="text-center py-4 text-slate-500">لا توجد معاملات بعد</td></tr>` :
-                    recentT.map(t => `
-                        <tr>
-                            <td class="px-3 py-2 font-medium ${t.type === 'IN' ? 'text-emerald-600' : 'text-rose-600'}">
-                                ${t.type === 'IN' ? 'إيراد / توريد' : 'خصم / منصرف'}
-                            </td>
-                            <td class="px-3 py-2 font-bold">${Number(t.amount).toLocaleString()} SDG</td>
-                            <td class="px-3 py-2 text-xs text-slate-600">${t.note || '-'}</td>
-                            <td class="px-3 py-2 text-xs text-slate-500">${t.createdAt?.seconds ? new Date(t.createdAt.seconds * 1000).toLocaleDateString('ar-SD') : 'الآن'}</td>
-                        </tr>
-                    `).join('');
-            }
+            tBody.innerHTML = recentT.length === 0 ? 
+                `<tr><td colspan="4" class="text-center py-4 text-slate-500">لا توجد معاملات بعد</td></tr>` :
+                recentT.map(t => `
+                    <tr>
+                        <td class="px-3 py-2 font-medium ${t.type === 'IN' ? 'text-emerald-400' : 'text-rose-400'}">
+                            ${t.type === 'IN' ? 'إيراد / توريد' : 'خصم / منصرف'}
+                        </td>
+                        <td class="px-3 py-2 font-bold">${Number(t.amount).toLocaleString()} SDG</td>
+                        <td class="px-3 py-2 text-xs text-slate-300">${t.note || '-'}</td>
+                        <td class="px-3 py-2 text-xs text-slate-400">${t.createdAt?.seconds ? new Date(t.createdAt.seconds * 1000).toLocaleDateString('ar-SD') : 'الآن'}</td>
+                    </tr>
+                `).join('');
 
             // Urgent Debts
-            const urgentD = window.state.debts.filter(d => d.remainingAmount > 0).sort((a,b) => b.remainingAmount - a.remainingAmount).slice(0, 5);
+            const urgentD = state.debts.filter(d => d.remainingAmount > 0).sort((a,b) => b.remainingAmount - a.remainingAmount).slice(0, 5);
             const dBody = document.getElementById('dashboard-urgent-debts');
-            if (dBody) {
-                dBody.innerHTML = urgentD.length === 0 ? 
-                    `<tr><td colspan="3" class="text-center py-4 text-slate-500">لا توجد ديون مستحقة حالياً</td></tr>` :
-                    urgentD.map(d => `
-                        <tr>
-                            <td class="px-3 py-2 font-semibold text-slate-800">${d.customerName}</td>
-                            <td class="px-3 py-2 font-bold text-rose-600">${Number(d.remainingAmount).toLocaleString()} SDG</td>
-                            <td class="px-3 py-2 text-center">
-                                <button onclick="openPayDebtModal('${d.id}', '${d.customerName}', ${d.remainingAmount})" class="px-3 py-1 bg-sky-500/10 text-sky-700 hover:bg-sky-500 hover:text-white rounded-lg text-xs transition-all font-bold border border-sky-200">
-                                    سداد
-                                </button>
-                            </td>
-                        </tr>
-                    `).join('');
-            }
-        };
+            dBody.innerHTML = urgentD.length === 0 ? 
+                `<tr><td colspan="3" class="text-center py-4 text-slate-500">لا توجد ديون مستحقة حالياً</td></tr>` :
+                urgentD.map(d => `
+                    <tr>
+                        <td class="px-3 py-2 font-semibold text-white">${d.customerName}</td>
+                        <td class="px-3 py-2 font-bold text-rose-300">${Number(d.remainingAmount).toLocaleString()} SDG</td>
+                        <td class="px-3 py-2 text-center">
+                            <button onclick="openPayDebtModal('${d.id}', '${d.customerName}', ${d.remainingAmount})" class="px-3 py-1 bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500 hover:text-slate-950 rounded-lg text-xs transition-all font-bold">
+                                سداد
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+        }
 
         // Inventory Management Logic
-        window.renderInventoryTable = function() {
+        function renderInventoryTable() {
             const tbody = document.getElementById('inventory-table-body');
-            if (!tbody) return;
-            const searchVal = (document.getElementById('inventory-search')?.value || '').trim().toLowerCase();
-            const filterStatus = document.getElementById('inventory-filter-status')?.value || 'ALL';
+            const searchVal = document.getElementById('inventory-search').value.trim().toLowerCase();
+            const filterStatus = document.getElementById('inventory-filter-status').value;
 
-            let filtered = window.state.sims.filter(sim => {
-                const matchSearch = (sim.serialNumber || '').toLowerCase().includes(searchVal);
+            let filtered = state.sims.filter(sim => {
+                const matchSearch = sim.serialNumber.toLowerCase().includes(searchVal);
                 const matchStatus = filterStatus === 'ALL' || sim.status === filterStatus;
                 return matchSearch && matchStatus;
             });
@@ -848,59 +835,45 @@
 
             tbody.innerHTML = filtered.map(sim => {
                 let statusBadge = sim.status === 'ACTIVE' 
-                    ? `<span class="px-2.5 py-1 text-xs rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200 font-semibold">نشطة (متاحة)</span>`
+                    ? `<span class="px-2.5 py-1 text-xs rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">نشطة (متاحة)</span>`
                     : sim.status === 'INACTIVE'
-                    ? `<span class="px-2.5 py-1 text-xs rounded-full bg-amber-100 text-amber-700 border border-amber-200 font-semibold">غير نشطة</span>`
-                    : `<span class="px-2.5 py-1 text-xs rounded-full bg-slate-100 text-slate-500 border border-slate-200 font-semibold">مباعة</span>`;
+                    ? `<span class="px-2.5 py-1 text-xs rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">غير نشطة</span>`
+                    : `<span class="px-2.5 py-1 text-xs rounded-full bg-purple-500/20 text-slate-400 border border-purple-500/30">مباعة</span>`;
 
                 return `
-                    <tr class="hover:bg-white/60 transition-all">
-                        <td class="px-4 py-3 font-bold text-slate-900 font-mono">${sim.serialNumber}</td>
-                        <td class="px-4 py-3 text-sky-700 font-semibold">${Number(sim.cost || 0).toLocaleString()} SDG</td>
+                    <tr class="hover:bg-white/5 transition-all">
+                        <td class="px-4 py-3 font-bold text-white font-mono">${sim.serialNumber}</td>
+                        <td class="px-4 py-3 text-cyan-300 font-semibold">${Number(sim.cost || 0).toLocaleString()} SDG</td>
                         <td class="px-4 py-3">${statusBadge}</td>
-                        <td class="px-4 py-3 text-xs text-slate-500">${sim.createdAt?.seconds ? new Date(sim.createdAt.seconds * 1000).toLocaleDateString('ar-SD') : 'الآن'}</td>
+                        <td class="px-4 py-3 text-xs text-slate-400">${sim.createdAt?.seconds ? new Date(sim.createdAt.seconds * 1000).toLocaleDateString('ar-SD') : 'الآن'}</td>
                         <td class="px-4 py-3 text-center">
                             ${sim.status !== 'SOLD' ? `
-                                <button onclick="toggleSimStatus('${sim.id}', '${sim.status}')" class="px-3 py-1 text-xs rounded-lg border border-slate-200 hover:border-sky-500 text-slate-600 hover:text-sky-700 transition-all font-semibold bg-white/80 shadow-sm">
+                                <button onclick="toggleSimStatus('${sim.id}', '${sim.status}')" class="px-3 py-1 text-xs rounded-lg border border-white/10 hover:border-cyan-400 text-slate-300 hover:text-white transition-all">
                                     تغيير إلى ${sim.status === 'ACTIVE' ? 'غير نشطة' : 'نشطة'}
                                 </button>
-                            ` : `<span class="text-xs text-slate-400">مكتملة</span>`}
+                            ` : `<span class="text-xs text-slate-500">مكتملة</span>`}
                         </td>
                     </tr>
                 `;
             }).join('');
-        };
-
-        window.toggleSimStatus = async function(id, currentStatus) {
-            const newStatus = currentStatus === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
-            try {
-                await window.fs.updateDoc(window.fs.doc(window.db, "sims", id), {
-                    status: newStatus
-                });
-                showToast('تم تحديث حالة الشريحة بنجاح');
-            } catch (err) {
-                console.error(err);
-                showToast('حدث خطأ أثناء تغيير الحالة', 'error');
-            }
-        };
+        }
 
         // Add SIM Modal Controls
-        window.openAddSimModal = function() {
-            document.getElementById('add-sim-modal')?.classList.remove('hidden');
-        };
+        function openAddSimModal() {
+            document.getElementById('add-sim-modal').classList.remove('hidden');
+        }
+        function closeAddSimModal() {
+            document.getElementById('add-sim-modal').classList.add('hidden');
+            document.getElementById('modal-sim-serial').value = '';
+            document.getElementById('modal-sim-cost').value = '';
+            document.getElementById('modal-sim-quantity').value = '1';
+        }
 
-        window.closeAddSimModal = function() {
-            document.getElementById('add-sim-modal')?.classList.add('hidden');
-            if (document.getElementById('modal-sim-serial')) document.getElementById('modal-sim-serial').value = '';
-            if (document.getElementById('modal-sim-cost')) document.getElementById('modal-sim-cost').value = '';
-            if (document.getElementById('modal-sim-quantity')) document.getElementById('modal-sim-quantity').value = '1';
-        };
-
-        window.submitAddSim = async function() {
-            const serial = document.getElementById('modal-sim-serial')?.value.trim();
-            const quantity = Number.parseInt(document.getElementById('modal-sim-quantity')?.value, 10);
-            const cost = Number(document.getElementById('modal-sim-cost')?.value) || 0;
-            const status = document.getElementById('modal-sim-status')?.value || 'ACTIVE';
+        async function submitAddSim() {
+            const serial = document.getElementById('modal-sim-serial').value.trim();
+            const quantity = Number.parseInt(document.getElementById('modal-sim-quantity').value, 10);
+            const cost = Number(document.getElementById('modal-sim-cost').value) || 0;
+            const status = document.getElementById('modal-sim-status').value;
 
             if (!serial) {
                 showToast('يرجى إدخال رقم الشريحة أو السيريال', 'error');
@@ -915,7 +888,7 @@
                 ? [serial]
                 : Array.from({ length: quantity }, (_, i) => `${serial}-${String(i + 1).padStart(String(quantity).length, '0')}`);
 
-            const existingSerials = new Set((window.state.sims || []).map(sim => String(sim.serialNumber || '').trim().toLowerCase()));
+            const existingSerials = new Set((state.sims || []).map(sim => String(sim.serialNumber || '').trim().toLowerCase()));
             const duplicate = serials.find(value => existingSerials.has(value.toLowerCase()));
             if (duplicate) {
                 showToast(`السيريال ${duplicate} موجود مسبقاً بالمخزن`, 'error');
@@ -947,27 +920,368 @@
                     saveButton.textContent = 'حفظ بالمخزن';
                 }
             }
-        };
+        }
+
+        // Navigation Management
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.remove('bg-white', 'text-sky-600', 'shadow-sm', 'border-r-4', 'border-sky-500');
+            });
+
+            const activeTab = document.getElementById(`tab-${tabId}`);
+            if (activeTab) activeTab.classList.remove('hidden');
+
+            const activeNav = document.getElementById(`nav-${tabId}`);
+            if (activeNav) {
+                activeNav.classList.add('bg-white', 'text-sky-600', 'shadow-sm', 'border-r-4', 'border-sky-500');
+            }
+
+            // Close mobile menu if open
+            const sidebar = document.getElementById('sidebar');
+            if (!sidebar.classList.contains('hidden') && window.innerWidth < 768) {
+                sidebar.classList.add('hidden');
+            }
+        }
+        // Inventory Management Logic
+        function renderInventoryTable() {
+            const tbody = document.getElementById('inventory-table-body');
+            const searchVal = document.getElementById('inventory-search').value.trim().toLowerCase();
+            const filterStatus = document.getElementById('inventory-filter-status').value;
+
+            let filtered = state.sims.filter(sim => {
+                const matchSearch = sim.serialNumber.toLowerCase().includes(searchVal);
+                const matchStatus = filterStatus === 'ALL' || sim.status === filterStatus;
+                return matchSearch && matchStatus;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-400">لا توجد شرائح مطابقة للبحث</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(sim => {
+                let statusBadge = sim.status === 'ACTIVE' 
+                    ? `<span class="px-2.5 py-1 text-xs rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200 font-semibold">نشطة (متاحة)</span>`
+                    : sim.status === 'INACTIVE'
+                    ? `<span class="px-2.5 py-1 text-xs rounded-full bg-amber-100 text-amber-700 border border-amber-200 font-semibold">غير نشطة</span>`
+                    : `<span class="px-2.5 py-1 text-xs rounded-full bg-slate-100 text-slate-500 border border-slate-200 font-semibold">مباعة</span>`;
+
+                return `
+                    <tr class="hover:bg-white/60 transition-all">
+                        <td class="px-4 py-3 font-bold text-slate-900 font-mono">${sim.serialNumber}</td>
+                        <td class="px-4 py-3 text-sky-700 font-semibold">${Number(sim.cost || 0).toLocaleString()} SDG</td>
+                        <td class="px-4 py-3">${statusBadge}</td>
+                        <td class="px-4 py-3 text-xs text-slate-500">${sim.createdAt?.seconds ? new Date(sim.createdAt.seconds * 1000).toLocaleDateString('ar-SD') : 'الآن'}</td>
+                        <td class="px-4 py-3 text-center">
+                            ${sim.status !== 'SOLD' ? `
+                                <button onclick="toggleSimStatus('${sim.id}', '${sim.status}')" class="px-3 py-1 text-xs rounded-lg border border-slate-200 hover:border-sky-500 text-slate-600 hover:text-sky-700 transition-all font-semibold bg-white/80 shadow-sm">
+                                    تغيير إلى ${sim.status === 'ACTIVE' ? 'غير نشطة' : 'نشطة'}
+                                </button>
+                            ` : `<span class="text-xs text-slate-400">مكتملة</span>`}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
 
         // Sales Logic Setup
-        window.populateSimSelectOptions = function() {
+        function populateSimSelectOptions() {
             const select = document.getElementById('sale-sim-select');
-            if (!select) return;
-            const activeSims = window.state.sims.filter(s => s.status === 'ACTIVE');
+            const activeSims = state.sims.filter(s => s.status === 'ACTIVE');
             
             select.innerHTML = '<option value="">-- اختر شريحة نشطة من المخزن --</option>' +
                 activeSims.map(s => `<option value="${s.id}">${s.serialNumber} (التكلفة: ${s.cost} SDG)</option>`).join('');
-        };
+        }
 
-        window.setSaleType = function(type) {
-            window.state.currentSaleType = type;
+        function setSaleType(type) {
+            state.currentSaleType = type;
             const singleBtn = document.getElementById('type-single-btn');
             const bulkBtn = document.getElementById('type-bulk-btn');
             const singleFields = document.getElementById('single-sale-fields');
             const bulkFields = document.getElementById('bulk-sale-fields');
 
             if (type === 'SINGLE') {
-                if (singleBtn) singleBtn.className = "py-3 px-4 rounded-xl border border-sky-500 bg-sky-50 text-sky-700 font-bold flex items-center justify-center gap-2 shadow-sm";
-                if (bulkBtn) bulkBtn.className = "py-3 px-4 rounded-xl border border-slate-200 bg-white/60 text-slate-500 font-bold flex items-center justify-center gap-2 hover:border-sky-300";
-                if (singleFields) singleFields.classList.remove('hidden');
-                if (bulkFields
+                singleBtn.className = "py-3 px-4 rounded-xl border border-sky-500 bg-sky-50 text-sky-700 font-bold flex items-center justify-center gap-2 shadow-sm";
+                bulkBtn.className = "py-3 px-4 rounded-xl border border-slate-200 bg-white/60 text-slate-500 font-bold flex items-center justify-center gap-2 hover:border-sky-300";
+                singleFields.classList.remove('hidden');
+                bulkFields.classList.add('hidden');
+            } else {
+                bulkBtn.className = "py-3 px-4 rounded-xl border border-sky-500 bg-sky-50 text-sky-700 font-bold flex items-center justify-center gap-2 shadow-sm";
+                singleBtn.className = "py-3 px-4 rounded-xl border border-slate-200 bg-white/60 text-slate-500 font-bold flex items-center justify-center gap-2 hover:border-sky-300";
+                bulkFields.classList.remove('hidden');
+                singleFields.classList.add('hidden');
+            }
+        }
+
+        function toggleDebtInput() {
+            const paymentType = document.getElementById('sale-payment-type').value;
+            const debtContainer = document.getElementById('debt-amount-container');
+            if (paymentType === 'PARTIAL') {
+                debtContainer.classList.remove('hidden');
+                calculateRemainingDebt();
+            } else {
+                debtContainer.classList.add('hidden');
+            }
+        }
+
+        function calculateRemainingDebt() {
+            let totalPrice = 0;
+            if (state.currentSaleType === 'SINGLE') {
+                totalPrice = Number(document.getElementById('sale-single-price').value) || 0;
+            } else {
+                totalPrice = Number(document.getElementById('sale-bulk-price').value) || 0;
+            }
+
+            const paidAmount = Number(document.getElementById('sale-paid-amount').value) || 0;
+            const remaining = Math.max(0, totalPrice - paidAmount);
+            document.getElementById('sale-remaining-debt').value = remaining;
+        }
+
+        // Process Complete Sale (Transaction Safe)
+        async function processSaleSubmit() {
+            const customerName = document.getElementById('sale-customer-name').value.trim();
+            const paymentType = document.getElementById('sale-payment-type').value;
+
+            if (!customerName) {
+                showToast('يرجى إدخال اسم العميل / المشتري', 'error');
+                return;
+            }
+
+            let totalPrice = 0;
+            let paidCash = 0;
+            let remainingDebt = 0;
+            let simsToSell = [];
+
+            if (state.currentSaleType === 'SINGLE') {
+                const simId = document.getElementById('sale-sim-select').value;
+                totalPrice = Number(document.getElementById('sale-single-price').value) || 0;
+
+                if (!simId) {
+                    showToast('يرجى اختيار شريحة نشطة للبيع', 'error');
+                    return;
+                }
+                if (totalPrice <= 0) {
+                    showToast('يرجى تحديد سعر بيع صحيح', 'error');
+                    return;
+                }
+
+                simsToSell.push(simId);
+            } else {
+                // BULK SALE
+                const count = Number(document.getElementById('sale-bulk-count').value) || 0;
+                totalPrice = Number(document.getElementById('sale-bulk-price').value) || 0;
+                const activeSims = state.sims.filter(s => s.status === 'ACTIVE');
+
+                if (count <= 0 || count > activeSims.length) {
+                    showToast(`العدد المطلوب غير متاح. الشرائح النشطة المتوفرة: ${activeSims.length}`, 'error');
+                    return;
+                }
+                if (totalPrice <= 0) {
+                    showToast('يرجى إدخال السعر الإجمالي المتفق عليه للكتلة', 'error');
+                    return;
+                }
+
+                simsToSell = activeSims.slice(0, count).map(s => s.id);
+            }
+
+            if (paymentType === 'FULL') {
+                paidCash = totalPrice;
+                remainingDebt = 0;
+            } else {
+                paidCash = Number(document.getElementById('sale-paid-amount').value) || 0;
+                remainingDebt = Math.max(0, totalPrice - paidCash);
+            }
+
+            try {
+                // Execute sales update
+                for (const simId of simsToSell) {
+                    await window.fs.updateDoc(window.fs.doc(window.db, "sims", simId), {
+                        status: 'SOLD',
+                        soldAt: window.fs.serverTimestamp(),
+                        soldTo: customerName
+                    });
+                }
+
+                // Add Cash to Treasury if paidCash > 0
+                if (paidCash > 0) {
+                    await window.fs.addDoc(window.fs.collection(window.db, "treasury"), {
+                        type: 'IN',
+                        amount: paidCash,
+                        note: `إيراد مبيعات شرائح (${state.currentSaleType === 'SINGLE' ? 'فردي' : 'جملة'}) - العميل: ${customerName}`,
+                        createdAt: window.fs.serverTimestamp()
+                    });
+                }
+
+                // Create Debt entry if remainingDebt > 0
+                if (remainingDebt > 0) {
+                    await window.fs.addDoc(window.fs.collection(window.db, "debts"), {
+                        customerName: customerName,
+                        totalAmount: remainingDebt,
+                        paidAmount: 0,
+                        remainingAmount: remainingDebt,
+                        createdAt: window.fs.serverTimestamp()
+                    });
+                }
+
+                showToast(`تم إتمام عملية البيع بنجاح! عدد الشرائح: ${simsToSell.length}`);
+                
+                // Reset form fields
+                document.getElementById('sale-customer-name').value = '';
+                document.getElementById('sale-national-id').value = '';
+                document.getElementById('sale-single-price').value = '';
+                document.getElementById('sale-bulk-price').value = '';
+                document.getElementById('sale-bulk-count').value = '';
+                document.getElementById('sale-paid-amount').value = '';
+                document.getElementById('sale-remaining-debt').value = '0';
+
+                // Switch back to Dashboard view
+                switchTab('dashboard');
+
+            } catch (err) {
+                console.error("Sale Error:", err);
+                showToast('حدث خطأ أثناء معالجة عملية البيع', 'error');
+            }
+        }
+
+        // Treasury Management Logic
+        function renderTreasuryTable() {
+            const tbody = document.getElementById('treasury-table-body');
+            const sorted = [...state.treasury].sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+            if (sorted.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-slate-500">لا توجد حركات مالية في الخزنة</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = sorted.map(t => `
+                <tr class="hover:bg-white/5 transition-all">
+                    <td class="px-4 py-3 font-semibold ${t.type === 'IN' ? 'text-emerald-400' : 'text-rose-400'}">
+                        ${t.type === 'IN' ? 'وارد (إيراد)' : 'منصرف (خصم)'}
+                    </td>
+                    <td class="px-4 py-3 font-bold text-white">${Number(t.amount).toLocaleString()} SDG</td>
+                    <td class="px-4 py-3 text-slate-300">${t.note || '-'}</td>
+                    <td class="px-4 py-3 text-xs text-slate-400">${t.createdAt?.seconds ? new Date(t.createdAt.seconds * 1000).toLocaleString('ar-SD') : 'الآن'}</td>
+                </tr>
+            `).join('');
+        }
+
+        function openWithdrawModal() {
+            document.getElementById('withdraw-modal').classList.remove('hidden');
+        }
+        function closeWithdrawModal() {
+            document.getElementById('withdraw-modal').classList.add('hidden');
+            document.getElementById('modal-withdraw-amount').value = '';
+            document.getElementById('modal-withdraw-note').value = '';
+        }
+
+        async function submitWithdraw() {
+            const amount = Number(document.getElementById('modal-withdraw-amount').value) || 0;
+            const note = document.getElementById('modal-withdraw-note').value.trim();
+
+            if (amount <= 0) {
+                showToast('يرجى إدخال مبلغ صحيح للخصم', 'error');
+                return;
+            }
+            if (!note) {
+                showToast('سبب الخصم والملاحظة حقل إجباري لتثبيت المنصرف', 'error');
+                return;
+            }
+
+            try {
+                await window.fs.addDoc(window.fs.collection(window.db, "treasury"), {
+                    type: 'OUT',
+                    amount: amount,
+                    note: note,
+                    createdAt: window.fs.serverTimestamp()
+                });
+
+                showToast('تم خصم المبلغ من الخزنة وتسجيل المنصرف بنجاح');
+                closeWithdrawModal();
+            } catch (err) {
+                console.error(err);
+                showToast('فشل عملية الخصم من الخزنة', 'error');
+            }
+        }
+
+        // Debts Management Logic
+        function renderDebtsTable() {
+            const tbody = document.getElementById('debts-table-body');
+            const sorted = [...state.debts].sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+            if (sorted.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-500">لا يوجد سجل ديون حتى الآن</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = sorted.map(d => `
+                <tr class="hover:bg-white/5 transition-all">
+                    <td class="px-4 py-3 font-bold text-white">${d.customerName}</td>
+                    <td class="px-4 py-3 text-slate-300 font-semibold">${Number(d.totalAmount).toLocaleString()} SDG</td>
+                    <td class="px-4 py-3 text-emerald-400 font-semibold">${Number(d.paidAmount || 0).toLocaleString()} SDG</td>
+                    <td class="px-4 py-3 text-rose-300 font-bold">${Number(d.remainingAmount).toLocaleString()} SDG</td>
+                    <td class="px-4 py-3 text-xs text-slate-400">${d.createdAt?.seconds ? new Date(d.createdAt.seconds * 1000).toLocaleDateString('ar-SD') : 'الآن'}</td>
+                    <td class="px-4 py-3 text-center">
+                        ${d.remainingAmount > 0 ? `
+                            <button onclick="openPayDebtModal('${d.id}', '${d.customerName}', ${d.remainingAmount})" class="glow-button px-3 py-1.5 rounded-lg text-slate-950 font-bold text-xs">
+                                تسديد مبلغ
+                            </button>
+                        ` : `<span class="px-2 py-1 text-xs text-emerald-400 bg-emerald-500/20 rounded-md font-bold">مسدد بالكامل</span>`}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openPayDebtModal(debtId, customerName, remaining) {
+            document.getElementById('pay-debt-id').value = debtId;
+            document.getElementById('pay-debt-customer-name').textContent = customerName;
+            document.getElementById('pay-debt-remaining-display').textContent = remaining.toLocaleString() + ' SDG';
+            document.getElementById('pay-debt-modal').classList.remove('hidden');
+        }
+
+        function closePayDebtModal() {
+            document.getElementById('pay-debt-modal').classList.add('hidden');
+            document.getElementById('pay-debt-amount').value = '';
+        }
+
+        async function submitPayDebt() {
+            const debtId = document.getElementById('pay-debt-id').value;
+            const payAmount = Number(document.getElementById('pay-debt-amount').value) || 0;
+
+            const debtDoc = state.debts.find(d => d.id === debtId);
+            if (!debtDoc) return;
+
+            if (payAmount <= 0 || payAmount > debtDoc.remainingAmount) {
+                showToast(`يرجى إدخال مبلغ سداد بين 1 و ${debtDoc.remainingAmount} SDG`, 'error');
+                return;
+            }
+
+            try {
+                const newPaid = (Number(debtDoc.paidAmount) || 0) + payAmount;
+                const newRemaining = debtDoc.remainingAmount - payAmount;
+
+                // 1. Update Debt document
+                await window.fs.updateDoc(window.fs.doc(window.db, "debts", debtId), {
+                    paidAmount: newPaid,
+                    remainingAmount: newRemaining
+                });
+
+                // 2. Deposit into Treasury
+                await window.fs.addDoc(window.fs.collection(window.db, "treasury"), {
+                    type: 'IN',
+                    amount: payAmount,
+                    note: `سداد دين مستحق - العميل: ${debtDoc.customerName}`,
+                    createdAt: window.fs.serverTimestamp()
+                });
+
+                showToast('تم تسديد الدين وإضافة المبلغ إلى الخزنة بنجاح');
+                closePayDebtModal();
+
+            } catch (err) {
+                console.error(err);
+                showToast('حدث خطأ أثناء إجراء السداد', 'error');
+            }
+        }
+    </script>
+</body>
+</html>
