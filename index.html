@@ -167,7 +167,6 @@
 
         <!-- TAB 1: DASHBOARD -->
         <section id="tab-dashboard" class="tab-content flex flex-col gap-6">
-            <!-- Header -->
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h2 class="text-2xl md:text-3xl font-bold font-tajawal text-slate-900">نظرة عامة على النشاط</h2>
@@ -181,7 +180,6 @@
 
             <!-- Stats Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- Active SIMs -->
                 <div class="glass-card p-5 rounded-2xl flex items-center justify-between">
                     <div>
                         <p class="text-xs text-sky-600 font-semibold mb-1">الشرائح النشطة (المتاحة)</p>
@@ -193,7 +191,6 @@
                     </div>
                 </div>
 
-                <!-- Sold SIMs -->
                 <div class="glass-card p-5 rounded-2xl flex items-center justify-between">
                     <div>
                         <p class="text-xs text-purple-600 font-semibold mb-1">إجمالي الشرائح المباعة</p>
@@ -205,7 +202,6 @@
                     </div>
                 </div>
 
-                <!-- Treasury Balance -->
                 <div class="glass-card p-5 rounded-2xl flex items-center justify-between">
                     <div>
                         <p class="text-xs text-emerald-600 font-semibold mb-1">رصيد الخزنة الحالي</p>
@@ -217,7 +213,6 @@
                     </div>
                 </div>
 
-                <!-- Total Debts -->
                 <div class="glass-card p-5 rounded-2xl flex items-center justify-between">
                     <div>
                         <p class="text-xs text-rose-600 font-semibold mb-1">إجمالي الديون المستحقة</p>
@@ -232,7 +227,6 @@
 
             <!-- Recent Activity Tables & Overview -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Recent Transactions -->
                 <div class="glass-panel p-5 rounded-2xl">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="font-bold text-lg text-slate-900 font-tajawal flex items-center gap-2">
@@ -257,7 +251,6 @@
                     </div>
                 </div>
 
-                <!-- Top Debtors Quick List -->
                 <div class="glass-panel p-5 rounded-2xl">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="font-bold text-lg text-slate-900 font-tajawal flex items-center gap-2">
@@ -343,9 +336,7 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Left: Sale Form -->
                 <div class="lg:col-span-2 glass-panel p-6 rounded-2xl space-y-6">
-                    <!-- Sale Type Selector -->
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-2">نوع البيع</label>
                         <div class="grid grid-cols-2 gap-4">
@@ -393,7 +384,6 @@
 
                     <hr class="border-slate-200">
 
-                    <!-- PAYMENT STATUS & CUSTOMER INFO -->
                     <div class="space-y-4">
                         <h4 class="font-bold text-sm text-sky-800">تفاصيل الدفع والتسديد</h4>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -410,7 +400,6 @@
                             </div>
                         </div>
 
-                        <!-- PARTIAL PAYMENT / DEBT AMOUNT FIELD -->
                         <div id="debt-amount-container" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-rose-50 border border-rose-200">
                             <div>
                                 <label class="block text-xs font-semibold text-rose-800 mb-1">المبلغ المدفوع كاش الآن (SDG)</label>
@@ -423,14 +412,12 @@
                         </div>
                     </div>
 
-                    <!-- Submit Button -->
                     <button onclick="processSaleSubmit()" class="w-full glow-button py-3.5 rounded-xl font-extrabold text-base flex items-center justify-center gap-2">
                         <i class="fa-solid fa-circle-check"></i>
                         <span>إتمام بيع الشرائح وتسجيل المالية</span>
                     </button>
                 </div>
 
-                <!-- Right: Information Box -->
                 <div class="glass-panel p-6 rounded-2xl flex flex-col justify-between space-y-4">
                     <div>
                         <h3 class="font-bold text-lg text-slate-900 mb-2 flex items-center gap-2">
@@ -465,7 +452,6 @@
                 </button>
             </div>
 
-            <!-- Treasury Balance Card -->
             <div class="glass-panel p-6 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-6 border-r-4 border-r-sky-500">
                 <div class="flex items-center gap-4">
                     <div class="w-16 h-16 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center text-3xl border border-sky-200">
@@ -488,7 +474,6 @@
                 </div>
             </div>
 
-            <!-- Treasury Ledger Table -->
             <div class="glass-panel rounded-2xl overflow-hidden">
                 <div class="p-4 border-b border-slate-100 flex items-center justify-between">
                     <h3 class="font-bold text-slate-900 font-tajawal text-base">سجل الحركة المالية للخزنة</h3>
@@ -518,7 +503,6 @@
                 <p class="text-slate-500 text-sm mt-1">متابعة المبالغ المتبقية لدى العملاء وإمكانية تحصيل السداد الجزئي أو الكلي</p>
             </div>
 
-            <!-- Debts Table -->
             <div class="glass-panel rounded-2xl overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-right text-slate-700">
@@ -627,7 +611,7 @@
         </div>
     </div>
 
-    <!-- Firebase SDK Setup Module -->
+    <!-- Application Script Logic & Firebase Integration (Combined to avoid scope errors) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { 
@@ -650,8 +634,16 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Make Firestore services available globally for UI functions
-        window.db = db;
+        // Global App State
+        window.state = {
+            sims: [],
+            treasury: [],
+            debts: [],
+            currentSaleType: 'SINGLE'
+        };
+
+        // Expose Firebase functions globally to be accessible from standard UI functions
+        window.dbInstance = db;
         window.fs = {
             collection, addDoc, getDocs, onSnapshot, doc, updateDoc, deleteDoc, runTransaction, serverTimestamp
         };
@@ -666,262 +658,6 @@
 
     <!-- Application Script Logic -->
     <script>
-        // Global App State
-        let state = {
-            sims: [],
-            treasury: [],
-            debts: [],
-            currentSaleType: 'SINGLE' // 'SINGLE' or 'BULK'
-        };
-
-        // Navigation Management
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.nav-item').forEach(el => {
-                el.classList.remove('bg-white/10', 'text-white', 'border-r-4', 'border-cyan-400');
-            });
-
-            const activeTab = document.getElementById(`tab-${tabId}`);
-            if (activeTab) activeTab.classList.remove('hidden');
-
-            const activeNav = document.getElementById(`nav-${tabId}`);
-            if (activeNav) {
-                activeNav.classList.add('bg-white/10', 'text-white', 'border-r-4', 'border-cyan-400');
-            }
-
-            // Close mobile menu if open
-            const sidebar = document.getElementById('sidebar');
-            if (!sidebar.classList.contains('hidden') && window.innerWidth < 768) {
-                sidebar.classList.add('hidden');
-            }
-        }
-
-        // Toggle Mobile Navigation
-        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('hidden');
-        });
-
-        // Toast Notification System
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            
-            const bgColor = type === 'success' ? 'bg-emerald-50 border-emerald-300 text-emerald-800' : 
-                            type === 'error' ? 'bg-rose-50 border-rose-300 text-rose-800' : 'bg-sky-50 border-sky-300 text-sky-800';
-            
-            toast.className = `glass-panel px-4 py-3 rounded-xl border ${bgColor} text-sm shadow-xl flex items-center gap-3 animate-fade-in`;
-            toast.innerHTML = `
-                <i class="fa-solid ${type === 'success' ? 'fa-check-circle text-emerald-600' : 'fa-exclamation-circle text-rose-600'}"></i>
-                <span class="font-semibold">${message}</span>
-            `;
-
-            container.appendChild(toast);
-            setTimeout(() => {
-                toast.remove();
-            }, 3500);
-        }
-
-        // Realtime Data Subscription
-        function initRealtimeData() {
-            // Listen to SIMs
-            window.fs.onSnapshot(window.fs.collection(window.db, "sims"), (snapshot) => {
-                state.sims = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderDashboardStats();
-                renderInventoryTable();
-                populateSimSelectOptions();
-            }, (error) => console.error("Error SIMs:", error));
-
-            // Listen to Treasury Transactions
-            window.fs.onSnapshot(window.fs.collection(window.db, "treasury"), (snapshot) => {
-                state.treasury = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderDashboardStats();
-                renderTreasuryTable();
-            }, (error) => console.error("Error Treasury:", error));
-
-            // Listen to Debts
-            window.fs.onSnapshot(window.fs.collection(window.db, "debts"), (snapshot) => {
-                state.debts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderDashboardStats();
-                renderDebtsTable();
-            }, (error) => console.error("Error Debts:", error));
-
-            // Default active tab
-            switchTab('dashboard');
-        }
-
-        // Dashboard Stats Rendering
-        function renderDashboardStats() {
-            const activeSims = state.sims.filter(s => s.status === 'ACTIVE').length;
-            const soldSims = state.sims.filter(s => s.status === 'SOLD').length;
-
-            // Treasury Balance calculation
-            const totalIn = state.treasury.filter(t => t.type === 'IN').reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
-            const totalOut = state.treasury.filter(t => t.type === 'OUT').reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
-            const balance = totalIn - totalOut;
-
-            // Total remaining debts
-            const totalDebts = state.debts.reduce((acc, curr) => acc + (Number(curr.remainingAmount) || 0), 0);
-
-            // Update DOM Elements
-            document.getElementById('stat-active-sims').textContent = activeSims;
-            document.getElementById('stat-sold-sims').textContent = soldSims;
-            document.getElementById('stat-treasury-balance').textContent = balance.toLocaleString('ar-SD') + ' SDG';
-            document.getElementById('stat-total-debts').textContent = totalDebts.toLocaleString('ar-SD') + ' SDG';
-
-            // Treasury page balance details
-            document.getElementById('treasury-page-balance').textContent = balance.toLocaleString('ar-SD') + ' SDG';
-            document.getElementById('treasury-total-in').textContent = totalIn.toLocaleString('ar-SD') + ' SDG';
-            document.getElementById('treasury-total-out').textContent = totalOut.toLocaleString('ar-SD') + ' SDG';
-
-            // Bulk SIM count preview
-            document.getElementById('bulk-available-count').textContent = activeSims;
-
-            // Render Recent Activities on Dashboard
-            renderRecentDashboardTables();
-        }
-
-        function renderRecentDashboardTables() {
-            // Recent Transactions
-            const recentT = [...state.treasury].sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0)).slice(0, 5);
-            const tBody = document.getElementById('dashboard-recent-transactions');
-            tBody.innerHTML = recentT.length === 0 ? 
-                `<tr><td colspan="4" class="text-center py-4 text-slate-500">لا توجد معاملات بعد</td></tr>` :
-                recentT.map(t => `
-                    <tr>
-                        <td class="px-3 py-2 font-medium ${t.type === 'IN' ? 'text-emerald-400' : 'text-rose-400'}">
-                            ${t.type === 'IN' ? 'إيراد / توريد' : 'خصم / منصرف'}
-                        </td>
-                        <td class="px-3 py-2 font-bold">${Number(t.amount).toLocaleString()} SDG</td>
-                        <td class="px-3 py-2 text-xs text-slate-300">${t.note || '-'}</td>
-                        <td class="px-3 py-2 text-xs text-slate-400">${t.createdAt?.seconds ? new Date(t.createdAt.seconds * 1000).toLocaleDateString('ar-SD') : 'الآن'}</td>
-                    </tr>
-                `).join('');
-
-            // Urgent Debts
-            const urgentD = state.debts.filter(d => d.remainingAmount > 0).sort((a,b) => b.remainingAmount - a.remainingAmount).slice(0, 5);
-            const dBody = document.getElementById('dashboard-urgent-debts');
-            dBody.innerHTML = urgentD.length === 0 ? 
-                `<tr><td colspan="3" class="text-center py-4 text-slate-500">لا توجد ديون مستحقة حالياً</td></tr>` :
-                urgentD.map(d => `
-                    <tr>
-                        <td class="px-3 py-2 font-semibold text-white">${d.customerName}</td>
-                        <td class="px-3 py-2 font-bold text-rose-300">${Number(d.remainingAmount).toLocaleString()} SDG</td>
-                        <td class="px-3 py-2 text-center">
-                            <button onclick="openPayDebtModal('${d.id}', '${d.customerName}', ${d.remainingAmount})" class="px-3 py-1 bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500 hover:text-slate-950 rounded-lg text-xs transition-all font-bold">
-                                سداد
-                            </button>
-                        </td>
-                    </tr>
-                `).join('');
-        }
-
-        // Inventory Management Logic
-        function renderInventoryTable() {
-            const tbody = document.getElementById('inventory-table-body');
-            const searchVal = document.getElementById('inventory-search').value.trim().toLowerCase();
-            const filterStatus = document.getElementById('inventory-filter-status').value;
-
-            let filtered = state.sims.filter(sim => {
-                const matchSearch = sim.serialNumber.toLowerCase().includes(searchVal);
-                const matchStatus = filterStatus === 'ALL' || sim.status === filterStatus;
-                return matchSearch && matchStatus;
-            });
-
-            if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-500">لا توجد شرائح مطابقة للبحث</td></tr>`;
-                return;
-            }
-
-            tbody.innerHTML = filtered.map(sim => {
-                let statusBadge = sim.status === 'ACTIVE' 
-                    ? `<span class="px-2.5 py-1 text-xs rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">نشطة (متاحة)</span>`
-                    : sim.status === 'INACTIVE'
-                    ? `<span class="px-2.5 py-1 text-xs rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">غير نشطة</span>`
-                    : `<span class="px-2.5 py-1 text-xs rounded-full bg-purple-500/20 text-slate-400 border border-purple-500/30">مباعة</span>`;
-
-                return `
-                    <tr class="hover:bg-white/5 transition-all">
-                        <td class="px-4 py-3 font-bold text-white font-mono">${sim.serialNumber}</td>
-                        <td class="px-4 py-3 text-cyan-300 font-semibold">${Number(sim.cost || 0).toLocaleString()} SDG</td>
-                        <td class="px-4 py-3">${statusBadge}</td>
-                        <td class="px-4 py-3 text-xs text-slate-400">${sim.createdAt?.seconds ? new Date(sim.createdAt.seconds * 1000).toLocaleDateString('ar-SD') : 'الآن'}</td>
-                        <td class="px-4 py-3 text-center">
-                            ${sim.status !== 'SOLD' ? `
-                                <button onclick="toggleSimStatus('${sim.id}', '${sim.status}')" class="px-3 py-1 text-xs rounded-lg border border-white/10 hover:border-cyan-400 text-slate-300 hover:text-white transition-all">
-                                    تغيير إلى ${sim.status === 'ACTIVE' ? 'غير نشطة' : 'نشطة'}
-                                </button>
-                            ` : `<span class="text-xs text-slate-500">مكتملة</span>`}
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        // Add SIM Modal Controls
-        function openAddSimModal() {
-            document.getElementById('add-sim-modal').classList.remove('hidden');
-        }
-        function closeAddSimModal() {
-            document.getElementById('add-sim-modal').classList.add('hidden');
-            document.getElementById('modal-sim-serial').value = '';
-            document.getElementById('modal-sim-cost').value = '';
-            document.getElementById('modal-sim-quantity').value = '1';
-        }
-
-        async function submitAddSim() {
-            const serial = document.getElementById('modal-sim-serial').value.trim();
-            const quantity = Number.parseInt(document.getElementById('modal-sim-quantity').value, 10);
-            const cost = Number(document.getElementById('modal-sim-cost').value) || 0;
-            const status = document.getElementById('modal-sim-status').value;
-
-            if (!serial) {
-                showToast('يرجى إدخال رقم الشريحة أو السيريال', 'error');
-                return;
-            }
-            if (!Number.isInteger(quantity) || quantity < 1 || quantity > 500) {
-                showToast('الكمية يجب أن تكون بين 1 و500', 'error');
-                return;
-            }
-
-            const serials = quantity === 1
-                ? [serial]
-                : Array.from({ length: quantity }, (_, i) => `${serial}-${String(i + 1).padStart(String(quantity).length, '0')}`);
-
-            const existingSerials = new Set((state.sims || []).map(sim => String(sim.serialNumber || '').trim().toLowerCase()));
-            const duplicate = serials.find(value => existingSerials.has(value.toLowerCase()));
-            if (duplicate) {
-                showToast(`السيريال ${duplicate} موجود مسبقاً بالمخزن`, 'error');
-                return;
-            }
-
-            const saveButton = document.querySelector('#add-sim-modal button[onclick="submitAddSim()"]');
-            if (saveButton) {
-                saveButton.disabled = true;
-                saveButton.textContent = 'جارٍ الحفظ...';
-            }
-            try {
-                for (const itemSerial of serials) {
-                    await window.fs.addDoc(window.fs.collection(window.db, "sims"), {
-                        serialNumber: itemSerial,
-                        cost,
-                        status,
-                        createdAt: window.fs.serverTimestamp()
-                    });
-                }
-                showToast(`تمت إضافة ${quantity} شريحة إلى المخزن بنجاح`);
-                closeAddSimModal();
-            } catch (err) {
-                console.error(err);
-                showToast('حدث خطأ أثناء إضافة الشرائح', 'error');
-            } finally {
-                if (saveButton) {
-                    saveButton.disabled = false;
-                    saveButton.textContent = 'حفظ بالمخزن';
-                }
-            }
-        }
-
         // Navigation Management
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
@@ -937,19 +673,120 @@
                 activeNav.classList.add('bg-white', 'text-sky-600', 'shadow-sm', 'border-r-4', 'border-sky-500');
             }
 
-            // Close mobile menu if open
             const sidebar = document.getElementById('sidebar');
             if (!sidebar.classList.contains('hidden') && window.innerWidth < 768) {
                 sidebar.classList.add('hidden');
             }
         }
-        // Inventory Management Logic
+
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('hidden');
+        });
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            const bgColor = type === 'success' ? 'bg-emerald-50 border-emerald-300 text-emerald-800' : 
+                            type === 'error' ? 'bg-rose-50 border-rose-300 text-rose-800' : 'bg-sky-50 border-sky-300 text-sky-800';
+            
+            toast.className = `glass-panel px-4 py-3 rounded-xl border ${bgColor} text-sm shadow-xl flex items-center gap-3`;
+            toast.innerHTML = `
+                <i class="fa-solid ${type === 'success' ? 'fa-check-circle text-emerald-600' : 'fa-exclamation-circle text-rose-600'}"></i>
+                <span class="font-semibold">${message}</span>
+            `;
+
+            container.appendChild(toast);
+            setTimeout(() => { toast.remove(); }, 3500);
+        }
+
+        function initRealtimeData() {
+            window.fs.onSnapshot(window.fs.collection(window.dbInstance, "sims"), (snapshot) => {
+                window.state.sims = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderDashboardStats();
+                renderInventoryTable();
+                populateSimSelectOptions();
+            }, (error) => console.error("Error SIMs:", error));
+
+            window.fs.onSnapshot(window.fs.collection(window.dbInstance, "treasury"), (snapshot) => {
+                window.state.treasury = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderDashboardStats();
+                renderTreasuryTable();
+            }, (error) => console.error("Error Treasury:", error));
+
+            window.fs.onSnapshot(window.fs.collection(window.dbInstance, "debts"), (snapshot) => {
+                window.state.debts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderDashboardStats();
+                renderDebtsTable();
+            }, (error) => console.error("Error Debts:", error));
+
+            switchTab('dashboard');
+        }
+
+        function renderDashboardStats() {
+            const activeSims = window.state.sims.filter(s => s.status === 'ACTIVE').length;
+            const soldSims = window.state.sims.filter(s => s.status === 'SOLD').length;
+
+            const totalIn = window.state.treasury.filter(t => t.type === 'IN').reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+            const totalOut = window.state.treasury.filter(t => t.type === 'OUT').reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+            const balance = totalIn - totalOut;
+
+            const totalDebts = window.state.debts.reduce((acc, curr) => acc + (Number(curr.remainingAmount) || 0), 0);
+
+            document.getElementById('stat-active-sims').textContent = activeSims;
+            document.getElementById('stat-sold-sims').textContent = soldSims;
+            document.getElementById('stat-treasury-balance').textContent = balance.toLocaleString('ar-SD') + ' SDG';
+            document.getElementById('stat-total-debts').textContent = totalDebts.toLocaleString('ar-SD') + ' SDG';
+
+            document.getElementById('treasury-page-balance').textContent = balance.toLocaleString('ar-SD') + ' SDG';
+            document.getElementById('treasury-total-in').textContent = totalIn.toLocaleString('ar-SD') + ' SDG';
+            document.getElementById('treasury-total-out').textContent = totalOut.toLocaleString('ar-SD') + ' SDG';
+
+            document.getElementById('bulk-available-count').textContent = activeSims;
+
+            renderRecentDashboardTables();
+        }
+
+        function renderRecentDashboardTables() {
+            const recentT = [...window.state.treasury].sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0)).slice(0, 5);
+            const tBody = document.getElementById('dashboard-recent-transactions');
+            tBody.innerHTML = recentT.length === 0 ? 
+                `<tr><td colspan="4" class="text-center py-4 text-slate-500">لا توجد معاملات بعد</td></tr>` :
+                recentT.map(t => `
+                    <tr>
+                        <td class="px-3 py-2 font-medium ${t.type === 'IN' ? 'text-emerald-600' : 'text-rose-600'}">
+                            ${t.type === 'IN' ? 'إيراد / توريد' : 'خصم / منصرف'}
+                        </td>
+                        <td class="px-3 py-2 font-bold">${Number(t.amount).toLocaleString()} SDG</td>
+                        <td class="px-3 py-2 text-xs text-slate-600">${t.note || '-'}</td>
+                        <td class="px-3 py-2 text-xs text-slate-500">${t.createdAt?.seconds ? new Date(t.createdAt.seconds * 1000).toLocaleDateString('ar-SD') : 'الآن'}</td>
+                    </tr>
+                `).join('');
+
+            const urgentD = window.state.debts.filter(d => d.remainingAmount > 0).sort((a,b) => b.remainingAmount - a.remainingAmount).slice(0, 5);
+            const dBody = document.getElementById('dashboard-urgent-debts');
+            dBody.innerHTML = urgentD.length === 0 ? 
+                `<tr><td colspan="3" class="text-center py-4 text-slate-500">لا توجد ديون مستحقة حالياً</td></tr>` :
+                urgentD.map(d => `
+                    <tr>
+                        <td class="px-3 py-2 font-semibold text-slate-900">${d.customerName}</td>
+                        <td class="px-3 py-2 font-bold text-rose-600">${Number(d.remainingAmount).toLocaleString()} SDG</td>
+                        <td class="px-3 py-2 text-center">
+                            <button onclick="openPayDebtModal('${d.id}', '${d.customerName}', ${d.remainingAmount})" class="px-3 py-1 bg-cyan-100 text-cyan-700 hover:bg-cyan-600 hover:text-white rounded-lg text-xs transition-all font-bold">
+                                سداد
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+        }
+
         function renderInventoryTable() {
             const tbody = document.getElementById('inventory-table-body');
             const searchVal = document.getElementById('inventory-search').value.trim().toLowerCase();
             const filterStatus = document.getElementById('inventory-filter-status').value;
 
-            let filtered = state.sims.filter(sim => {
+            let filtered = window.state.sims.filter(sim => {
                 const matchSearch = sim.serialNumber.toLowerCase().includes(searchVal);
                 const matchStatus = filterStatus === 'ALL' || sim.status === filterStatus;
                 return matchSearch && matchStatus;
@@ -985,17 +822,92 @@
             }).join('');
         }
 
-        // Sales Logic Setup
+        function openAddSimModal() {
+            document.getElementById('add-sim-modal').classList.remove('hidden');
+        }
+        function closeAddSimModal() {
+            document.getElementById('add-sim-modal').classList.add('hidden');
+            document.getElementById('modal-sim-serial').value = '';
+            document.getElementById('modal-sim-cost').value = '';
+            document.getElementById('modal-sim-quantity').value = '1';
+        }
+
+        async function submitAddSim() {
+            const serial = document.getElementById('modal-sim-serial').value.trim();
+            const quantity = Number.parseInt(document.getElementById('modal-sim-quantity').value, 10);
+            const cost = Number(document.getElementById('modal-sim-cost').value) || 0;
+            const status = document.getElementById('modal-sim-status').value;
+
+            if (!serial) {
+                showToast('يرجى إدخال رقم الشريحة أو السيريال', 'error');
+                return;
+            }
+            if (!Number.isInteger(quantity) || quantity < 1 || quantity > 500) {
+                showToast('الكمية يجب أن تكون بين 1 و500', 'error');
+                return;
+            }
+
+            const serials = quantity === 1
+                ? [serial]
+                : Array.from({ length: quantity }, (_, i) => `${serial}-${String(i + 1).padStart(String(quantity).length, '0')}`);
+
+            const existingSerials = new Set((window.state.sims || []).map(sim => String(sim.serialNumber || '').trim().toLowerCase()));
+            const duplicate = serials.find(value => existingSerials.has(value.toLowerCase()));
+            if (duplicate) {
+                showToast(`السيريال ${duplicate} موجود مسبقاً بالمخزن`, 'error');
+                return;
+            }
+
+            const saveButton = document.querySelector('#add-sim-modal button[onclick="submitAddSim()"]');
+            if (saveButton) {
+                saveButton.disabled = true;
+                saveButton.textContent = 'جارٍ الحفظ...';
+            }
+            try {
+                for (const itemSerial of serials) {
+                    await window.fs.addDoc(window.fs.collection(window.dbInstance, "sims"), {
+                        serialNumber: itemSerial,
+                        cost,
+                        status,
+                        createdAt: window.fs.serverTimestamp()
+                    });
+                }
+                showToast(`تمت إضافة ${quantity} شريحة إلى المخزن بنجاح`);
+                closeAddSimModal();
+            } catch (err) {
+                console.error(err);
+                showToast('حدث خطأ أثناء إضافة الشرائح', 'error');
+            } finally {
+                if (saveButton) {
+                    saveButton.disabled = false;
+                    saveButton.textContent = 'حفظ بالمخزن';
+                }
+            }
+        }
+
+        async function toggleSimStatus(simId, currentStatus) {
+            const newStatus = currentStatus === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+            try {
+                await window.fs.updateDoc(window.fs.doc(window.dbInstance, "sims", simId), {
+                    status: newStatus
+                });
+                showToast('تم تحديث حالة الشريحة بنجاح');
+            } catch (err) {
+                console.error(err);
+                showToast('فشل تحديث حالة الشريحة', 'error');
+            }
+        }
+
         function populateSimSelectOptions() {
             const select = document.getElementById('sale-sim-select');
-            const activeSims = state.sims.filter(s => s.status === 'ACTIVE');
+            const activeSims = window.state.sims.filter(s => s.status === 'ACTIVE');
             
             select.innerHTML = '<option value="">-- اختر شريحة نشطة من المخزن --</option>' +
                 activeSims.map(s => `<option value="${s.id}">${s.serialNumber} (التكلفة: ${s.cost} SDG)</option>`).join('');
         }
 
         function setSaleType(type) {
-            state.currentSaleType = type;
+            window.state.currentSaleType = type;
             const singleBtn = document.getElementById('type-single-btn');
             const bulkBtn = document.getElementById('type-bulk-btn');
             const singleFields = document.getElementById('single-sale-fields');
@@ -1027,7 +939,7 @@
 
         function calculateRemainingDebt() {
             let totalPrice = 0;
-            if (state.currentSaleType === 'SINGLE') {
+            if (window.state.currentSaleType === 'SINGLE') {
                 totalPrice = Number(document.getElementById('sale-single-price').value) || 0;
             } else {
                 totalPrice = Number(document.getElementById('sale-bulk-price').value) || 0;
@@ -1038,7 +950,6 @@
             document.getElementById('sale-remaining-debt').value = remaining;
         }
 
-        // Process Complete Sale (Transaction Safe)
         async function processSaleSubmit() {
             const customerName = document.getElementById('sale-customer-name').value.trim();
             const paymentType = document.getElementById('sale-payment-type').value;
@@ -1053,7 +964,7 @@
             let remainingDebt = 0;
             let simsToSell = [];
 
-            if (state.currentSaleType === 'SINGLE') {
+            if (window.state.currentSaleType === 'SINGLE') {
                 const simId = document.getElementById('sale-sim-select').value;
                 totalPrice = Number(document.getElementById('sale-single-price').value) || 0;
 
@@ -1068,10 +979,9 @@
 
                 simsToSell.push(simId);
             } else {
-                // BULK SALE
-                const count = Number(document.getElementById('sale-bulk-count').value) || 0;
+                const count = Number.parseInt(document.getElementById('sale-bulk-count').value, 10) || 0;
                 totalPrice = Number(document.getElementById('sale-bulk-price').value) || 0;
-                const activeSims = state.sims.filter(s => s.status === 'ACTIVE');
+                const activeSims = window.state.sims.filter(s => s.status === 'ACTIVE');
 
                 if (count <= 0 || count > activeSims.length) {
                     showToast(`العدد المطلوب غير متاح. الشرائح النشطة المتوفرة: ${activeSims.length}`, 'error');
@@ -1094,28 +1004,25 @@
             }
 
             try {
-                // Execute sales update
                 for (const simId of simsToSell) {
-                    await window.fs.updateDoc(window.fs.doc(window.db, "sims", simId), {
+                    await window.fs.updateDoc(window.fs.doc(window.dbInstance, "sims", simId), {
                         status: 'SOLD',
                         soldAt: window.fs.serverTimestamp(),
                         soldTo: customerName
                     });
                 }
 
-                // Add Cash to Treasury if paidCash > 0
                 if (paidCash > 0) {
-                    await window.fs.addDoc(window.fs.collection(window.db, "treasury"), {
+                    await window.fs.addDoc(window.fs.collection(window.dbInstance, "treasury"), {
                         type: 'IN',
                         amount: paidCash,
-                        note: `إيراد مبيعات شرائح (${state.currentSaleType === 'SINGLE' ? 'فردي' : 'جملة'}) - العميل: ${customerName}`,
+                        note: `إيراد مبيعات شرائح (${window.state.currentSaleType === 'SINGLE' ? 'فردي' : 'جملة'}) - العميل: ${customerName}`,
                         createdAt: window.fs.serverTimestamp()
                     });
                 }
 
-                // Create Debt entry if remainingDebt > 0
                 if (remainingDebt > 0) {
-                    await window.fs.addDoc(window.fs.collection(window.db, "debts"), {
+                    await window.fs.addDoc(window.fs.collection(window.dbInstance, "debts"), {
                         customerName: customerName,
                         totalAmount: remainingDebt,
                         paidAmount: 0,
@@ -1126,7 +1033,6 @@
 
                 showToast(`تم إتمام عملية البيع بنجاح! عدد الشرائح: ${simsToSell.length}`);
                 
-                // Reset form fields
                 document.getElementById('sale-customer-name').value = '';
                 document.getElementById('sale-national-id').value = '';
                 document.getElementById('sale-single-price').value = '';
@@ -1135,7 +1041,6 @@
                 document.getElementById('sale-paid-amount').value = '';
                 document.getElementById('sale-remaining-debt').value = '0';
 
-                // Switch back to Dashboard view
                 switchTab('dashboard');
 
             } catch (err) {
@@ -1144,10 +1049,9 @@
             }
         }
 
-        // Treasury Management Logic
         function renderTreasuryTable() {
             const tbody = document.getElementById('treasury-table-body');
-            const sorted = [...state.treasury].sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+            const sorted = [...window.state.treasury].sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
 
             if (sorted.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-slate-500">لا توجد حركات مالية في الخزنة</td></tr>`;
@@ -1156,12 +1060,12 @@
 
             tbody.innerHTML = sorted.map(t => `
                 <tr class="hover:bg-white/5 transition-all">
-                    <td class="px-4 py-3 font-semibold ${t.type === 'IN' ? 'text-emerald-400' : 'text-rose-400'}">
+                    <td class="px-4 py-3 font-semibold ${t.type === 'IN' ? 'text-emerald-600' : 'text-rose-600'}">
                         ${t.type === 'IN' ? 'وارد (إيراد)' : 'منصرف (خصم)'}
                     </td>
-                    <td class="px-4 py-3 font-bold text-white">${Number(t.amount).toLocaleString()} SDG</td>
-                    <td class="px-4 py-3 text-slate-300">${t.note || '-'}</td>
-                    <td class="px-4 py-3 text-xs text-slate-400">${t.createdAt?.seconds ? new Date(t.createdAt.seconds * 1000).toLocaleString('ar-SD') : 'الآن'}</td>
+                    <td class="px-4 py-3 font-bold text-slate-900">${Number(t.amount).toLocaleString()} SDG</td>
+                    <td class="px-4 py-3 text-slate-600">${t.note || '-'}</td>
+                    <td class="px-4 py-3 text-xs text-slate-500">${t.createdAt?.seconds ? new Date(t.createdAt.seconds * 1000).toLocaleString('ar-SD') : 'الآن'}</td>
                 </tr>
             `).join('');
         }
@@ -1189,7 +1093,7 @@
             }
 
             try {
-                await window.fs.addDoc(window.fs.collection(window.db, "treasury"), {
+                await window.fs.addDoc(window.fs.collection(window.dbInstance, "treasury"), {
                     type: 'OUT',
                     amount: amount,
                     note: note,
@@ -1204,10 +1108,9 @@
             }
         }
 
-        // Debts Management Logic
         function renderDebtsTable() {
             const tbody = document.getElementById('debts-table-body');
-            const sorted = [...state.debts].sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+            const sorted = [...window.state.debts].sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
 
             if (sorted.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-500">لا يوجد سجل ديون حتى الآن</td></tr>`;
@@ -1216,17 +1119,17 @@
 
             tbody.innerHTML = sorted.map(d => `
                 <tr class="hover:bg-white/5 transition-all">
-                    <td class="px-4 py-3 font-bold text-white">${d.customerName}</td>
-                    <td class="px-4 py-3 text-slate-300 font-semibold">${Number(d.totalAmount).toLocaleString()} SDG</td>
-                    <td class="px-4 py-3 text-emerald-400 font-semibold">${Number(d.paidAmount || 0).toLocaleString()} SDG</td>
-                    <td class="px-4 py-3 text-rose-300 font-bold">${Number(d.remainingAmount).toLocaleString()} SDG</td>
-                    <td class="px-4 py-3 text-xs text-slate-400">${d.createdAt?.seconds ? new Date(d.createdAt.seconds * 1000).toLocaleDateString('ar-SD') : 'الآن'}</td>
+                    <td class="px-4 py-3 font-bold text-slate-900">${d.customerName}</td>
+                    <td class="px-4 py-3 text-slate-600 font-semibold">${Number(d.totalAmount).toLocaleString()} SDG</td>
+                    <td class="px-4 py-3 text-emerald-600 font-semibold">${Number(d.paidAmount || 0).toLocaleString()} SDG</td>
+                    <td class="px-4 py-3 text-rose-600 font-bold">${Number(d.remainingAmount).toLocaleString()} SDG</td>
+                    <td class="px-4 py-3 text-xs text-slate-500">${d.createdAt?.seconds ? new Date(d.createdAt.seconds * 1000).toLocaleDateString('ar-SD') : 'الآن'}</td>
                     <td class="px-4 py-3 text-center">
                         ${d.remainingAmount > 0 ? `
-                            <button onclick="openPayDebtModal('${d.id}', '${d.customerName}', ${d.remainingAmount})" class="glow-button px-3 py-1.5 rounded-lg text-slate-950 font-bold text-xs">
+                            <button onclick="openPayDebtModal('${d.id}', '${d.customerName}', ${d.remainingAmount})" class="glow-button px-3 py-1.5 rounded-lg text-white font-bold text-xs">
                                 تسديد مبلغ
                             </button>
-                        ` : `<span class="px-2 py-1 text-xs text-emerald-400 bg-emerald-500/20 rounded-md font-bold">مسدد بالكامل</span>`}
+                        ` : `<span class="px-2 py-1 text-xs text-emerald-600 bg-emerald-100 rounded-md font-bold">مسدد بالكامل</span>`}
                     </td>
                 </tr>
             `).join('');
@@ -1248,7 +1151,7 @@
             const debtId = document.getElementById('pay-debt-id').value;
             const payAmount = Number(document.getElementById('pay-debt-amount').value) || 0;
 
-            const debtDoc = state.debts.find(d => d.id === debtId);
+            const debtDoc = window.state.debts.find(d => d.id === debtId);
             if (!debtDoc) return;
 
             if (payAmount <= 0 || payAmount > debtDoc.remainingAmount) {
@@ -1260,14 +1163,12 @@
                 const newPaid = (Number(debtDoc.paidAmount) || 0) + payAmount;
                 const newRemaining = debtDoc.remainingAmount - payAmount;
 
-                // 1. Update Debt document
-                await window.fs.updateDoc(window.fs.doc(window.db, "debts", debtId), {
+                await window.fs.updateDoc(window.fs.doc(window.dbInstance, "debts", debtId), {
                     paidAmount: newPaid,
                     remainingAmount: newRemaining
                 });
 
-                // 2. Deposit into Treasury
-                await window.fs.addDoc(window.fs.collection(window.db, "treasury"), {
+                await window.fs.addDoc(window.fs.collection(window.dbInstance, "treasury"), {
                     type: 'IN',
                     amount: payAmount,
                     note: `سداد دين مستحق - العميل: ${debtDoc.customerName}`,
