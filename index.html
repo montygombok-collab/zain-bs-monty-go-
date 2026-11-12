@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monty Go SDN - نظام إدارة مبيعات شرائح زين</title>
+    <title>Monty Go SDN - نظام إدارة مبيعات شرائح زين والسيولة</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Cairo & Tajawal -->
@@ -134,6 +134,10 @@
                 <i class="fa-solid fa-chart-pie text-sky-500 w-6 text-center text-lg"></i>
                 <span>لوحة التحكم</span>
             </button>
+            <button onclick="switchTab('liquidity')" id="nav-liquidity" class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-slate-600 hover:text-sky-600 hover:bg-white/80 transition-all text-right w-full">
+                <i class="fa-solid fa-money-bill-wave text-emerald-600 w-6 text-center text-lg"></i>
+                <span>السيولة الحالية (باليد)</span>
+            </button>
             <button onclick="switchTab('inventory')" id="nav-inventory" class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-slate-600 hover:text-sky-600 hover:bg-white/80 transition-all text-right w-full">
                 <i class="fa-solid fa-sim-card text-sky-500 w-6 text-center text-lg"></i>
                 <span>إدارة المخزن</span>
@@ -144,7 +148,7 @@
             </button>
             <button onclick="switchTab('treasury')" id="nav-treasury" class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-slate-600 hover:text-sky-600 hover:bg-white/80 transition-all text-right w-full">
                 <i class="fa-solid fa-vault text-sky-500 w-6 text-center text-lg"></i>
-                <span>الخزنة والمالية</span>
+                <span>الخزنة العامة والمالية</span>
             </button>
             <button onclick="switchTab('debts')" id="nav-debts" class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-slate-600 hover:text-sky-600 hover:bg-white/80 transition-all text-right w-full">
                 <i class="fa-solid fa-hand-holding-dollar text-sky-500 w-6 text-center text-lg"></i>
@@ -186,7 +190,7 @@
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h2 class="text-2xl md:text-3xl font-bold font-tajawal text-slate-900">نظرة عامة على النشاط</h2>
-                    <p class="text-slate-500 text-sm mt-1">ملخص مبيعات الشرائح، الخزنة، الديون، وعهد المندوبين</p>
+                    <p class="text-slate-500 text-sm mt-1">ملخص السيولة، الخزنة، المبيعات، والديون</p>
                 </div>
                 <button onclick="switchTab('sales')" class="glow-button px-5 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 text-sm self-start md:self-auto">
                     <i class="fa-solid fa-plus"></i>
@@ -198,23 +202,23 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                 <div class="glass-card p-5 rounded-2xl flex items-center justify-between">
                     <div>
-                        <p class="text-xs text-sky-600 font-semibold mb-1">الشرائح النشطة (المتاحة)</p>
-                        <h3 id="stat-active-sims" class="text-3xl font-extrabold text-slate-900">0</h3>
-                        <p class="text-[11px] text-slate-500 mt-1">جاهزة للبيع المباشر</p>
+                        <p class="text-xs text-emerald-600 font-semibold mb-1">السيولة الحالية (باليد)</p>
+                        <h3 id="stat-liquidity-balance" class="text-2xl font-extrabold text-emerald-600">0.00 SDG</h3>
+                        <p class="text-[11px] text-slate-500 mt-1">الكاش الحر</p>
                     </div>
-                    <div class="w-12 h-12 rounded-xl bg-sky-50 border border-sky-200 flex items-center justify-center text-sky-600 text-xl">
-                        <i class="fa-solid fa-signal"></i>
+                    <div class="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 text-xl">
+                        <i class="fa-solid fa-money-bill-wave"></i>
                     </div>
                 </div>
 
                 <div class="glass-card p-5 rounded-2xl flex items-center justify-between">
                     <div>
-                        <p class="text-xs text-emerald-600 font-semibold mb-1">رصيد الخزنة الحالي</p>
-                        <h3 id="stat-treasury-balance" class="text-2xl font-extrabold text-emerald-600">0.00 SDG</h3>
-                        <p class="text-[11px] text-slate-500 mt-1">السيولة النقدية المتاحة</p>
+                        <p class="text-xs text-sky-600 font-semibold mb-1">رصيد الخزنة العامة</p>
+                        <h3 id="stat-treasury-balance" class="text-2xl font-extrabold text-sky-600">0.00 SDG</h3>
+                        <p class="text-[11px] text-slate-500 mt-1">الرصيد الرسمي للنظام</p>
                     </div>
-                    <div class="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 text-xl">
-                        <i class="fa-solid fa-wallet"></i>
+                    <div class="w-12 h-12 rounded-xl bg-sky-50 border border-sky-200 flex items-center justify-center text-sky-600 text-xl">
+                        <i class="fa-solid fa-vault"></i>
                     </div>
                 </div>
 
@@ -222,7 +226,7 @@
                     <div>
                         <p class="text-xs text-rose-600 font-semibold mb-1">الديون المستحقة (لنا)</p>
                         <h3 id="stat-total-debts" class="text-2xl font-extrabold text-rose-600">0.00 SDG</h3>
-                        <p class="text-[11px] text-slate-500 mt-1">مبالغ قيد التحصيل</p>
+                        <p class="text-[11px] text-slate-500 mt-1">قيد التحصيل</p>
                     </div>
                     <div class="w-12 h-12 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600 text-xl">
                         <i class="fa-solid fa-receipt"></i>
@@ -233,7 +237,7 @@
                     <div>
                         <p class="text-xs text-amber-600 font-semibold mb-1">ديوننا الخاصة (علينا)</p>
                         <h3 id="stat-total-our-debts" class="text-2xl font-extrabold text-amber-600">0.00 SDG</h3>
-                        <p class="text-[11px] text-slate-500 mt-1">مستحقات واجبة السداد</p>
+                        <p class="text-[11px] text-slate-500 mt-1">واجبة السداد</p>
                     </div>
                     <div class="w-12 h-12 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 text-xl">
                         <i class="fa-solid fa-file-invoice-dollar"></i>
@@ -242,12 +246,12 @@
 
                 <div class="glass-card p-5 rounded-2xl flex items-center justify-between">
                     <div>
-                        <p class="text-xs text-purple-600 font-semibold mb-1">دفعات عهدة المندوبين</p>
-                        <h3 id="stat-total-commission-batches" class="text-2xl font-extrabold text-purple-600">0</h3>
-                        <p class="text-[11px] text-slate-500 mt-1">دفعات شرائح بالنسبة</p>
+                        <p class="text-xs text-purple-600 font-semibold mb-1">الشرائح النشطة</p>
+                        <h3 id="stat-active-sims" class="text-3xl font-extrabold text-slate-900">0</h3>
+                        <p class="text-[11px] text-slate-500 mt-1">بالمخزن المباشر</p>
                     </div>
                     <div class="w-12 h-12 rounded-xl bg-purple-50 border border-purple-200 flex items-center justify-center text-purple-600 text-xl">
-                        <i class="fa-solid fa-handshake"></i>
+                        <i class="fa-solid fa-signal"></i>
                     </div>
                 </div>
             </div>
@@ -257,21 +261,21 @@
                 <div class="glass-panel p-5 rounded-2xl">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="font-bold text-lg text-slate-900 font-tajawal flex items-center gap-2">
-                            <i class="fa-solid fa-history text-sky-600"></i> آخر العمليات في الخزنة
+                            <i class="fa-solid fa-history text-emerald-600"></i> آخر حركات السيولة باليد
                         </h3>
-                        <button onclick="switchTab('treasury')" class="text-xs text-sky-600 font-semibold hover:underline">عرض الكل</button>
+                        <button onclick="switchTab('liquidity')" class="text-xs text-emerald-600 font-semibold hover:underline">إدارة السيولة</button>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm text-right text-slate-700">
-                            <thead class="text-xs uppercase bg-slate-100/80 text-sky-800">
+                            <thead class="text-xs uppercase bg-emerald-50 text-emerald-800">
                                 <tr>
-                                    <th class="px-3 py-2 rounded-r-lg">النوع</th>
+                                    <th class="px-3 py-2 rounded-r-lg">المصدر / النوع</th>
                                     <th class="px-3 py-2">المبلغ</th>
-                                    <th class="px-3 py-2">البيان/الملاحظة</th>
+                                    <th class="px-3 py-2">البيان</th>
                                     <th class="px-3 py-2 rounded-l-lg">التاريخ</th>
                                 </tr>
                             </thead>
-                            <tbody id="dashboard-recent-transactions" class="divide-y divide-slate-100">
+                            <tbody id="dashboard-recent-liquidity" class="divide-y divide-slate-100">
                                 <tr><td colspan="4" class="text-center py-4 text-slate-400">جاري تحميل البيانات...</td></tr>
                             </tbody>
                         </table>
@@ -291,7 +295,7 @@
                                 <tr>
                                     <th class="px-3 py-2 rounded-r-lg">العميل</th>
                                     <th class="px-3 py-2">المبلغ المتبقي</th>
-                                    <th class="px-3 py-2 rounded-l-lg text-center">إجراء سداد</th>
+                                    <th class="px-3 py-2 rounded-l-lg text-center">إجراء تحصيل</th>
                                 </tr>
                             </thead>
                             <tbody id="dashboard-urgent-debts" class="divide-y divide-slate-100">
@@ -303,7 +307,65 @@
             </div>
         </section>
 
-        <!-- TAB 2: INVENTORY MANAGEMENT -->
+        <!-- TAB 2: LIQUIDITY (السيولة الحالية - الكاش باليد مع حرية المصادر والتحويل) -->
+        <section id="tab-liquidity" class="tab-content hidden flex flex-col gap-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold font-tajawal text-slate-900">السيولة الحالية (القروش التي في يدك)</h2>
+                    <p class="text-slate-500 text-sm mt-1">تتبع الأموال النقدية بغض النظر عن مصدرها (دين، إيراد شرايح، سلفية، أو رأس مال مؤقت) وإمكانية نقلها بين الحسابات</p>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="openAddLiquidityModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2.5 rounded-xl shadow-md transition-all flex items-center gap-2 text-sm">
+                        <i class="fa-solid fa-plus-circle"></i> إضافة سيولة / مصدر
+                    </button>
+                    <button onclick="openTransferLiquidityModal()" class="glow-button px-4 py-2.5 rounded-xl font-bold flex items-center gap-2 text-sm">
+                        <i class="fa-solid fa-right-left"></i> تحويل إلى حساب آخر
+                    </button>
+                </div>
+            </div>
+
+            <!-- Liquidity Overview Card -->
+            <div class="glass-panel p-6 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-6 border-r-4 border-r-emerald-500">
+                <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-3xl border border-emerald-200">
+                        <i class="fa-solid fa-money-bill-wave"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-500 font-semibold">إجمالي السيولة النقدية باليد حالياً</span>
+                        <h3 id="liquidity-page-balance" class="text-3xl md:text-4xl font-extrabold text-emerald-600">0.00 SDG</h3>
+                    </div>
+                </div>
+                <div class="text-xs text-slate-600 space-y-1 bg-white/80 p-3 rounded-xl border border-slate-200 shadow-sm">
+                    <p><i class="fa-solid fa-check text-emerald-600"></i> تشمل الأموال الواردة من السلفيات، رؤوس الأموال المؤقتة، وإيرادات الشرائح.</p>
+                    <p><i class="fa-solid fa-check text-emerald-600"></i> قابلة للتحويل مباشرة إلى الخزنة العامة أو سداد الديون والالتزامات.</p>
+                </div>
+            </div>
+
+            <!-- Liquidity Table -->
+            <div class="glass-panel rounded-2xl overflow-hidden">
+                <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+                    <h3 class="font-bold text-slate-900 font-tajawal text-base">سجل واردات وحركات السيولة النقدية</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-right text-slate-700">
+                        <thead class="text-xs uppercase bg-emerald-50 text-emerald-900 font-bold">
+                            <tr>
+                                <th class="px-4 py-3">المصدر / النوع</th>
+                                <th class="px-4 py-3">المبلغ (SDG)</th>
+                                <th class="px-4 py-3">الجهة / الوصف أو الملاحظة</th>
+                                <th class="px-4 py-3">التاريخ والوقت</th>
+                                <th class="px-4 py-3 text-center">الحالة</th>
+                            </tr>
+                        </thead>
+                        <tbody id="liquidity-table-body" class="divide-y divide-slate-100">
+                            <tr><td colspan="5" class="text-center py-6 text-slate-400">جاري تحميل سجل السيولة...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: INVENTORY MANAGEMENT -->
         <section id="tab-inventory" class="tab-content hidden flex flex-col gap-6">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
@@ -355,11 +417,11 @@
             </div>
         </section>
 
-        <!-- TAB 3: SALES MANAGEMENT -->
+        <!-- TAB 4: SALES MANAGEMENT -->
         <section id="tab-sales" class="tab-content hidden flex flex-col gap-6">
             <div>
                 <h2 class="text-2xl md:text-3xl font-bold font-tajawal text-slate-900">تسجيل عملية بيع جديدة</h2>
-                <p class="text-slate-500 text-sm mt-1">دعم البيع الفردي أو البيع بالجملة (إجمالي) مع الإضافة التلقائية للخزنة والديون</p>
+                <p class="text-slate-500 text-sm mt-1">دعم البيع الفردي أو الجماعي مع توجيه الإيراد للسيولة اليدوية باليد أو الخزنة العامة</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -412,12 +474,22 @@
                     <hr class="border-slate-200">
 
                     <div class="space-y-4">
-                        <h4 class="font-bold text-sm text-sky-800">تفاصيل الدفع والتسديد</h4>
+                        <h4 class="font-bold text-sm text-sky-800">تفاصيل الدفع وتوجيه الإيراد</h4>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-semibold text-slate-700 mb-1">اسم العميل / المشتري *</label>
                                 <input type="text" id="sale-customer-name" placeholder="اسم العميل الكامل" class="w-full bg-white/90 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-sky-500 shadow-sm">
                             </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">إيداع الإيراد الكاش في *</label>
+                                <select id="sale-destination" class="w-full bg-white/90 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-sky-500 shadow-sm">
+                                    <option value="LIQUIDITY">السيولة الحالية (الكاش باليد)</option>
+                                    <option value="TREASURY">الخزنة العامة</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-semibold text-slate-700 mb-1">حالة الدفع *</label>
                                 <select id="sale-payment-type" onchange="toggleDebtInput()" class="w-full bg-white/90 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-sky-500 shadow-sm">
@@ -441,7 +513,7 @@
 
                     <button onclick="processSaleSubmit()" class="w-full glow-button py-3.5 rounded-xl font-extrabold text-base flex items-center justify-center gap-2">
                         <i class="fa-solid fa-circle-check"></i>
-                        <span>إتمام بيع الشرائح وتسجيل المالية</span>
+                        <span>إتمام بيع الشرائح وتسجيل الحسابات</span>
                     </button>
                 </div>
 
@@ -451,10 +523,9 @@
                             <i class="fa-solid fa-lightbulb text-amber-500"></i> ملاحظات الإدارة
                         </h3>
                         <ul class="text-xs text-slate-600 space-y-3 list-disc list-inside leading-relaxed">
-                            <li>فقط الشرائح المعلمة بـ <span class="text-emerald-600 font-bold">"نشطة"</span> هي التي تظهر في قائمة البيع.</li>
-                            <li>تخصم الشرائح المباعة تلقائياً من المخزن المتاح وتتحول حالتها إلى <span class="text-slate-500 font-bold">"مباعة"</span>.</li>
-                            <li>يُحول أي مبلغ كاش مدفوع مباشرة إلى <span class="text-sky-600 font-bold">الخزنة</span>.</li>
-                            <li>إذا كان البيع غير مدفوع بالكامل، يتم تدوين الباقي تلقائياً في جدول <span class="text-rose-600 font-bold">الديون المستحقة</span> باسم العميل.</li>
+                            <li>يمكنك اختيار إيداع الكاش فوراً في <span class="text-emerald-600 font-bold">السيولة الحالية (باليد)</span> أو <span class="text-sky-600 font-bold">الخزنة العامة</span>.</li>
+                            <li>تخصم الشرائح المباعة تلقائياً من المخزن وتتحول حالتها إلى <span class="text-slate-500 font-bold">"مباعة"</span>.</li>
+                            <li>البيع الآجل يسجل تلقائياً في جدول <span class="text-rose-600 font-bold">الديون المستحقة</span>.</li>
                         </ul>
                     </div>
 
@@ -466,12 +537,12 @@
             </div>
         </section>
 
-        <!-- TAB 4: TREASURY & CASH FLOW -->
+        <!-- TAB 5: TREASURY & CASH FLOW -->
         <section id="tab-treasury" class="tab-content hidden flex flex-col gap-6">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h2 class="text-2xl md:text-3xl font-bold font-tajawal text-slate-900">الخزنة والمالية</h2>
-                    <p class="text-slate-500 text-sm mt-1">متابعة الإيرادات وتثبيت المصروفات أو خصومات شراء الشرائح الجديدة</p>
+                    <h2 class="text-2xl md:text-3xl font-bold font-tajawal text-slate-900">الخزنة العامة والمالية</h2>
+                    <p class="text-slate-500 text-sm mt-1">متابعة الإيرادات العامة وتثبيت المصروفات أو خصومات شراء الشرائح</p>
                 </div>
                 <button onclick="openWithdrawModal()" class="bg-rose-600 hover:bg-rose-500 text-white font-bold px-5 py-2.5 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 text-sm">
                     <i class="fa-solid fa-minus-circle"></i>
@@ -485,7 +556,7 @@
                         <i class="fa-solid fa-vault"></i>
                     </div>
                     <div>
-                        <span class="text-xs text-slate-500 font-semibold">الرصيد النقدي الحالي بالخزنة</span>
+                        <span class="text-xs text-slate-500 font-semibold">رصيد الخزنة العامة الحالي</span>
                         <h3 id="treasury-page-balance" class="text-3xl md:text-4xl font-extrabold text-slate-900">0.00 SDG</h3>
                     </div>
                 </div>
@@ -503,7 +574,7 @@
 
             <div class="glass-panel rounded-2xl overflow-hidden">
                 <div class="p-4 border-b border-slate-100 flex items-center justify-between">
-                    <h3 class="font-bold text-slate-900 font-tajawal text-base">سجل الحركة المالية للخزنة</h3>
+                    <h3 class="font-bold text-slate-900 font-tajawal text-base">سجل الحركة المالية للخزنة العامة</h3>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-right text-slate-700">
@@ -523,11 +594,11 @@
             </div>
         </section>
 
-        <!-- TAB 5: DEBTS TRACKER (لنا) -->
+        <!-- TAB 6: DEBTS TRACKER (لنا) -->
         <section id="tab-debts" class="tab-content hidden flex flex-col gap-6">
             <div>
                 <h2 class="text-2xl md:text-3xl font-bold font-tajawal text-slate-900">الديون المستحقة (لنا عند العملاء)</h2>
-                <p class="text-slate-500 text-sm mt-1">متابعة المبالغ المتبقية لدى العملاء وإمكانية تحصيل السداد الجزئي أو الكلي</p>
+                <p class="text-slate-500 text-sm mt-1">متابعة المبالغ المتبقية لدى العملاء وتحصيلها لتوجيهها إما للسيولة باليد أو الخزنة</p>
             </div>
 
             <div class="glass-panel rounded-2xl overflow-hidden">
@@ -540,7 +611,7 @@
                                 <th class="px-4 py-3">المبلغ المسدد</th>
                                 <th class="px-4 py-3">المبلغ المتبقي</th>
                                 <th class="px-4 py-3">تاريخ إنشاء الدين</th>
-                                <th class="px-4 py-3 text-center">إجراء سداد</th>
+                                <th class="px-4 py-3 text-center">إجراء سداد وتحصيل</th>
                             </tr>
                         </thead>
                         <tbody id="debts-table-body" class="divide-y divide-slate-100">
@@ -551,12 +622,12 @@
             </div>
         </section>
 
-        <!-- TAB 6: OUR DEBTS (الديون الخاصة بنا - التي علينا للغير) -->
+        <!-- TAB 7: OUR DEBTS (الديون الخاصة بنا - التي علينا للغير) -->
         <section id="tab-our-debts" class="tab-content hidden flex flex-col gap-6">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h2 class="text-2xl md:text-3xl font-bold font-tajawal text-slate-900">الديون الخاصة بنا (مستحقات علينا للغير)</h2>
-                    <p class="text-slate-500 text-sm mt-1">تسجيل ومتابعة ديون الموردين أو الشركات (مثل شرائح أخذناها ولم نعهد ثمنها بعد)</p>
+                    <p class="text-slate-500 text-sm mt-1">تسجيل ومتابعة ديون الموردين أو الشركات وسدادها من السيولة باليد أو الخزنة</p>
                 </div>
                 <button onclick="openAddOurDebtModal()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-5 py-2.5 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 text-sm">
                     <i class="fa-solid fa-plus-circle"></i>
@@ -585,12 +656,12 @@
             </div>
         </section>
 
-        <!-- TAB 7: COMMISSION SIMS (شرائح بالنسبة للمندوبين - دفعات كمية) -->
+        <!-- TAB 8: COMMISSION SIMS (شرائح بالنسبة للمندوبين - دفعات كمية) -->
         <section id="tab-commission-sims" class="tab-content hidden flex flex-col gap-6">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h2 class="text-2xl md:text-3xl font-bold font-tajawal text-slate-900">شرائح بالنسبة (المندوبين - عهدة كمية)</h2>
-                    <p class="text-slate-500 text-sm mt-1">تسليم دفعة كمية من الشرائح للمندوب دفعة واحدة، ومتابعة ما باع وما المتبقي، وتصفية الأموال</p>
+                    <p class="text-slate-500 text-sm mt-1">تسليم دفعة كمية من الشرائح للمندوب وتصفية عوائد بيعها مباشرة إلى السيولة أو الخزنة</p>
                 </div>
                 <button onclick="openAssignBatchModal()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-5 py-2.5 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 text-sm">
                     <i class="fa-solid fa-boxes-stacked"></i>
@@ -621,6 +692,81 @@
         </section>
 
     </main>
+
+    <!-- MODAL: ADD LIQUIDITY (إضافة سيولة يدوية مع تحديد المصدر) -->
+    <div id="add-liquidity-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/30 backdrop-blur-md hidden">
+        <div class="glass-panel w-full max-w-lg p-6 rounded-2xl border border-emerald-200 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="font-bold text-lg text-emerald-700 font-tajawal">إضافة سيولة نقدية جديدة (الكاش باليد)</h3>
+                <button onclick="closeAddLiquidityModal()" class="text-slate-400 hover:text-slate-700 text-lg"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">مصدر السيولة *</label>
+                    <select id="modal-liq-source" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-emerald-500 shadow-sm">
+                        <option value="سلفية نقدية">سلفية نقدية</option>
+                        <option value="رأس مال مؤقت (استلاف رأس مال)">رأس مال مؤقت (استلاف رأس مال)</option>
+                        <option value="إيراد بيع شرائح غير نشطة">إيراد بيع شرائح غير نشطة</option>
+                        <option value="استرداد دين من عميل">استرداد دين من عميل</option>
+                        <option value="أخرى / وارد عام">أخرى / وارد عام</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">المبلغ (SDG) *</label>
+                    <input type="number" id="modal-liq-amount" placeholder="مثال: 50000" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-emerald-500 shadow-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">الجهة أو الوصف / تفاصيل المصدر *</label>
+                    <input type="text" id="modal-liq-note" placeholder="مثال: سلفية من فلان، أو رأس مال مؤقت لشراء شرائح..." class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-emerald-500 shadow-sm">
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+                <button onclick="closeAddLiquidityModal()" class="px-4 py-2 rounded-xl text-slate-600 text-sm hover:bg-slate-100">إلغاء</button>
+                <button onclick="submitAddLiquidity()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-5 py-2 rounded-xl text-sm shadow-md">إضافة للسيولة باليد</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: TRANSFER LIQUIDITY (تحويل السيولة إلى حساب آخر داخل النظام) -->
+    <div id="transfer-liquidity-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/30 backdrop-blur-md hidden">
+        <div class="glass-panel w-full max-w-lg p-6 rounded-2xl border border-sky-200 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="font-bold text-lg text-sky-700 font-tajawal">تحويل السيولة الحالية (الكاش باليد) إلى حساب آخر</h3>
+                <button onclick="closeTransferLiquidityModal()" class="text-slate-400 hover:text-slate-700 text-lg"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <div class="space-y-4">
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-center text-xs">
+                    <span>إجمالي السيولة المتاحة حالياً:</span>
+                    <strong id="transfer-max-liquidity" class="text-emerald-600 font-bold text-sm">0.00 SDG</strong>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">المبلغ المراد تحويله (SDG) *</label>
+                    <input type="number" id="modal-trans-amount" placeholder="أدخل مبلغ التحويل" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-sky-500 shadow-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">الوجهة المستهدفة للتحويل *</label>
+                    <select id="modal-trans-destination" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-sky-500 shadow-sm">
+                        <option value="TREASURY">الخزنة العامة (إيراد بالنظام)</option>
+                        <option value="PAY_OUR_DEBT">سداد دين علينا (مورد أو جهة)</option>
+                    </select>
+                </div>
+                <div id="trans-debt-container" class="hidden">
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">اختر الجهة الدائنة (التي سددتها من الكاش)</label>
+                    <select id="modal-trans-our-debt-id" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-sky-500 shadow-sm">
+                        <!-- تملأ برمجياً -->
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">ملاحظة التحويل *</label>
+                    <input type="text" id="modal-trans-note" placeholder="مثال: تحويل كاش للخزنة، أو سداد مورد..." class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-sky-500 shadow-sm">
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+                <button onclick="closeTransferLiquidityModal()" class="px-4 py-2 rounded-xl text-slate-600 text-sm hover:bg-slate-100">إلغاء</button>
+                <button onclick="submitTransferLiquidity()" class="glow-button px-5 py-2 rounded-xl font-bold text-sm">تنفيذ التحويل</button>
+            </div>
+        </div>
+    </div>
 
     <!-- MODAL 1: ADD NEW SIMs -->
     <div id="add-sim-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/30 backdrop-blur-md hidden">
@@ -661,7 +807,7 @@
     <div id="withdraw-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/30 backdrop-blur-md hidden">
         <div class="glass-panel w-full max-w-lg p-6 rounded-2xl border border-rose-200 space-y-4 shadow-2xl">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                <h3 class="font-bold text-lg text-rose-700 font-tajawal">سحب / خصم من الخزنة</h3>
+                <h3 class="font-bold text-lg text-rose-700 font-tajawal">سحب / خصم من الخزنة العامة</h3>
                 <button onclick="closeWithdrawModal()" class="text-slate-400 hover:text-slate-700 text-lg"><i class="fa-solid fa-times"></i></button>
             </div>
             <div class="space-y-4">
@@ -685,7 +831,7 @@
     <div id="pay-debt-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/30 backdrop-blur-md hidden">
         <div class="glass-panel w-full max-w-lg p-6 rounded-2xl border border-white space-y-4 shadow-2xl">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                <h3 class="font-bold text-lg text-slate-900 font-tajawal">تسديد دين للعميل: <span id="pay-debt-customer-name" class="text-sky-600"></span></h3>
+                <h3 class="font-bold text-lg text-slate-900 font-tajawal">تحصيل دين من العميل: <span id="pay-debt-customer-name" class="text-sky-600"></span></h3>
                 <button onclick="closePayDebtModal()" class="text-slate-400 hover:text-slate-700 text-lg"><i class="fa-solid fa-times"></i></button>
             </div>
             <input type="hidden" id="pay-debt-id">
@@ -695,8 +841,15 @@
                     <strong id="pay-debt-remaining-display" class="text-rose-600 font-bold text-sm">0.00 SDG</strong>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">المبلغ المراد سداده الآن (SDG) *</label>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">المبلغ المراد تحصيله الآن (SDG) *</label>
                     <input type="number" id="pay-debt-amount" placeholder="أدخل مبلغ السداد" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-sky-500 shadow-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">توجيه الأموال المحصلة إلى *</label>
+                    <select id="pay-debt-destination" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-sky-500 shadow-sm">
+                        <option value="LIQUIDITY">السيولة الحالية (الكاش باليد)</option>
+                        <option value="TREASURY">الخزنة العامة</option>
+                    </select>
                 </div>
             </div>
             <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
@@ -748,8 +901,15 @@
                     <strong id="pay-our-debt-remaining-display" class="text-amber-600 font-bold text-sm">0.00 SDG</strong>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">المبلغ المراد سداده كاش الآن من الخزنة (SDG) *</label>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">المبلغ المراد سداده الآن (SDG) *</label>
                     <input type="number" id="pay-our-debt-amount" placeholder="أدخل المبلغ المسدد" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-amber-500 shadow-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">الخصم والسداد يتم من *</label>
+                    <select id="pay-our-debt-source" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-amber-500 shadow-sm">
+                        <option value="LIQUIDITY">السيولة الحالية (الكاش باليد)</option>
+                        <option value="TREASURY">الخزنة العامة</option>
+                    </select>
                 </div>
             </div>
             <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
@@ -759,7 +919,7 @@
         </div>
     </div>
 
-    <!-- MODAL 6: ASSIGN BATCH OF COMMISSION SIMS (تسليم كمية شرائح عهدة للمندوب) -->
+    <!-- MODAL 6: ASSIGN BATCH OF COMMISSION SIMS -->
     <div id="assign-batch-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/30 backdrop-blur-md hidden">
         <div class="glass-panel w-full max-w-lg p-6 rounded-2xl border border-purple-200 space-y-4 shadow-2xl">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -781,7 +941,7 @@
                     <input type="number" id="modal-batch-price" placeholder="مثال: 6000" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-purple-500 shadow-sm">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">عمولة المندوب للشريحة (نسبة أو مبلغ ثابت) *</label>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">عمولة المندوب للشريحة *</label>
                     <input type="text" id="modal-batch-rate" placeholder="مثال: 1000 SDG أو 15%" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-purple-500 shadow-sm">
                 </div>
             </div>
@@ -792,7 +952,7 @@
         </div>
     </div>
 
-    <!-- MODAL 7: SETTLE BATCH (تصفية عدد معين أو الدفعة كامة للمندوب) -->
+    <!-- MODAL 7: SETTLE BATCH -->
     <div id="settle-batch-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/30 backdrop-blur-md hidden">
         <div class="glass-panel w-full max-w-lg p-6 rounded-2xl border border-emerald-200 space-y-4 shadow-2xl">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -807,14 +967,20 @@
                     <p>سعر بيع الشريحة: <strong id="settle-unit-price" class="text-sky-600"></strong></p>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">عدد الشرائح التي باعها وأحضر ثمنها الآن *</label>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">عدد الشرائح التي باعها وأحضر ثمنها *</label>
                     <input type="number" id="settle-sold-count" min="1" placeholder="مثال: 5" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-emerald-500 shadow-sm">
-                    <p class="text-[11px] text-slate-500 mt-1">سيتم حساب ثمنها الإجمالي وإضافته مباشرة للخزنة كإيراد.</p>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">توجيه حصيلة المبيعات إلى *</label>
+                    <select id="settle-destination" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-emerald-500 shadow-sm">
+                        <option value="LIQUIDITY">السيولة الحالية (الكاش باليد)</option>
+                        <option value="TREASURY">الخزنة العامة</option>
+                    </select>
                 </div>
             </div>
             <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
                 <button onclick="closeSettleBatchModal()" class="px-4 py-2 rounded-xl text-slate-600 text-sm hover:bg-slate-100">إلغاء</button>
-                <button onclick="submitSettleBatch()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-5 py-2 rounded-xl text-sm shadow-md">تأكيد إضافتها للخزنة</button>
+                <button onclick="submitSettleBatch()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-5 py-2 rounded-xl text-sm shadow-md">تأكيد التصفية وإضافة الأموال</button>
             </div>
         </div>
     </div>
@@ -843,6 +1009,7 @@
         window.state = {
             sims: [],
             treasury: [],
+            liquidity: [],
             debts: [],
             ourDebts: [],
             commissionBatches: [],
@@ -918,6 +1085,12 @@
                 renderTreasuryTable();
             }, (error) => console.error("Error Treasury:", error));
 
+            window.fs.onSnapshot(window.fs.collection(window.dbInstance, "liquidity"), (snapshot) => {
+                window.state.liquidity = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderDashboardStats();
+                renderLiquidityTable();
+            }, (error) => console.error("Error Liquidity:", error));
+
             window.fs.onSnapshot(window.fs.collection(window.dbInstance, "debts"), (snapshot) => {
                 window.state.debts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 renderDashboardStats();
@@ -930,7 +1103,6 @@
                 renderOurDebtsTable();
             }, (error) => console.error("Error Our Debts:", error));
 
-            // الاستماع لعهد دفعات المندوبين (commission_batches)
             window.fs.onSnapshot(window.fs.collection(window.dbInstance, "commission_batches"), (snapshot) => {
                 window.state.commissionBatches = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 renderDashboardStats();
@@ -950,7 +1122,7 @@
             try {
                 showToast("جاري تفريغ البيانات من السحابة...", "info");
 
-                const collections = ["sims", "treasury", "debts", "our_debts", "commission_batches"];
+                const collections = ["sims", "treasury", "liquidity", "debts", "our_debts", "commission_batches"];
                 for (const colName of collections) {
                     const snap = await window.fs.getDocs(window.fs.collection(window.dbInstance, colName));
                     for (const d of snap.docs) {
@@ -968,42 +1140,47 @@
 
         function renderDashboardStats() {
             const activeSims = window.state.sims.filter(s => s.status === 'ACTIVE').length;
+            
+            const liqTotal = window.state.liquidity.reduce((acc, curr) => {
+                const amt = Number(curr.amount) || 0;
+                return curr.type === 'OUT' ? acc - amt : acc + amt;
+            }, 0);
+
             const totalIn = window.state.treasury.filter(t => t.type === 'IN').reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
             const totalOut = window.state.treasury.filter(t => t.type === 'OUT').reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
-            const balance = totalIn - totalOut;
+            const treasuryBalance = totalIn - totalOut;
 
             const totalDebts = window.state.debts.reduce((acc, curr) => acc + (Number(curr.remainingAmount) || 0), 0);
             const totalOurDebts = window.state.ourDebts.reduce((acc, curr) => acc + (Number(curr.remainingAmount) || 0), 0);
-            const activeBatches = window.state.commissionBatches.filter(b => b.remainingQty > 0).length;
 
-            document.getElementById('stat-active-sims').textContent = activeSims;
-            document.getElementById('stat-treasury-balance').textContent = balance.toLocaleString('ar-SD') + ' SDG';
+            document.getElementById('stat-liquidity-balance').textContent = liqTotal.toLocaleString('ar-SD') + ' SDG';
+            document.getElementById('stat-treasury-balance').textContent = treasuryBalance.toLocaleString('ar-SD') + ' SDG';
             document.getElementById('stat-total-debts').textContent = totalDebts.toLocaleString('ar-SD') + ' SDG';
             document.getElementById('stat-total-our-debts').textContent = totalOurDebts.toLocaleString('ar-SD') + ' SDG';
-            document.getElementById('stat-total-commission-batches').textContent = activeBatches;
+            document.getElementById('stat-active-sims').textContent = activeSims;
 
-            document.getElementById('treasury-page-balance').textContent = balance.toLocaleString('ar-SD') + ' SDG';
+            document.getElementById('liquidity-page-balance').textContent = liqTotal.toLocaleString('ar-SD') + ' SDG';
+            document.getElementById('treasury-page-balance').textContent = treasuryBalance.toLocaleString('ar-SD') + ' SDG';
             document.getElementById('treasury-total-in').textContent = totalIn.toLocaleString('ar-SD') + ' SDG';
             document.getElementById('treasury-total-out').textContent = totalOut.toLocaleString('ar-SD') + ' SDG';
-
             document.getElementById('bulk-available-count').textContent = activeSims;
 
             renderRecentDashboardTables();
         }
 
         function renderRecentDashboardTables() {
-            const recentT = [...window.state.treasury].sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0)).slice(0, 5);
-            const tBody = document.getElementById('dashboard-recent-transactions');
-            tBody.innerHTML = recentT.length === 0 ? 
-                `<tr><td colspan="4" class="text-center py-4 text-slate-500">لا توجد معاملات بعد</td></tr>` :
-                recentT.map(t => `
+            const recentLiq = [...window.state.liquidity].sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0)).slice(0, 5);
+            const lBody = document.getElementById('dashboard-recent-liquidity');
+            lBody.innerHTML = recentLiq.length === 0 ? 
+                `<tr><td colspan="4" class="text-center py-4 text-slate-500">لا توجد حركات سيولة بعد</td></tr>` :
+                recentLiq.map(l => `
                     <tr>
-                        <td class="px-3 py-2 font-medium ${t.type === 'IN' ? 'text-emerald-600' : 'text-rose-600'}">
-                            ${t.type === 'IN' ? 'إيراد / توريد' : 'خصم / منصرف'}
+                        <td class="px-3 py-2 font-medium ${l.type === 'OUT' ? 'text-rose-600' : 'text-emerald-600'}">
+                            ${l.source}
                         </td>
-                        <td class="px-3 py-2 font-bold">${Number(t.amount).toLocaleString()} SDG</td>
-                        <td class="px-3 py-2 text-xs text-slate-600">${t.note || '-'}</td>
-                        <td class="px-3 py-2 text-xs text-slate-500">${t.createdAt?.seconds ? new Date(t.createdAt.seconds * 1000).toLocaleDateString('ar-SD') : 'الآن'}</td>
+                        <td class="px-3 py-2 font-bold">${Number(l.amount).toLocaleString()} SDG</td>
+                        <td class="px-3 py-2 text-xs text-slate-600">${l.note || '-'}</td>
+                        <td class="px-3 py-2 text-xs text-slate-500">${l.createdAt?.seconds ? new Date(l.createdAt.seconds * 1000).toLocaleDateString('ar-SD') : 'الآن'}</td>
                     </tr>
                 `).join('');
 
@@ -1017,11 +1194,171 @@
                         <td class="px-3 py-2 font-bold text-rose-600">${Number(d.remainingAmount).toLocaleString()} SDG</td>
                         <td class="px-3 py-2 text-center">
                             <button onclick="openPayDebtModal('${d.id}', '${d.customerName}', ${d.remainingAmount})" class="px-3 py-1 bg-cyan-100 text-cyan-700 hover:bg-cyan-600 hover:text-white rounded-lg text-xs transition-all font-bold">
-                                سداد
+                                تحصيل
                             </button>
                         </td>
                     </tr>
                 `).join('');
+        }
+
+        function renderLiquidityTable() {
+            const tbody = document.getElementById('liquidity-table-body');
+            const sorted = [...window.state.liquidity].sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+            if (sorted.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-500">لا توجد أموال مسجلة في السيولة باليد حالياً</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = sorted.map(l => `
+                <tr class="hover:bg-white/5 transition-all">
+                    <td class="px-4 py-3 font-bold ${l.type === 'OUT' ? 'text-rose-600' : 'text-emerald-700'}">${l.source}</td>
+                    <td class="px-4 py-3 font-bold text-slate-900">${Number(l.amount).toLocaleString()} SDG</td>
+                    <td class="px-4 py-3 text-slate-600">${l.note || '-'}</td>
+                    <td class="px-4 py-3 text-xs text-slate-500">${l.createdAt?.seconds ? new Date(l.createdAt.seconds * 1000).toLocaleString('ar-SD') : 'الآن'}</td>
+                    <td class="px-4 py-3 text-center">
+                        ${l.type !== 'OUT' ? `
+                            <span class="text-xs text-emerald-600 font-semibold bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">متاح للتحويل</span>
+                        ` : `<span class="text-xs text-slate-400">منصرف / محول</span>`}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openAddLiquidityModal() {
+            document.getElementById('add-liquidity-modal').classList.remove('hidden');
+        }
+        function closeAddLiquidityModal() {
+            document.getElementById('add-liquidity-modal').classList.add('hidden');
+            document.getElementById('modal-liq-amount').value = '';
+            document.getElementById('modal-liq-note').value = '';
+        }
+
+        async function submitAddLiquidity() {
+            const source = document.getElementById('modal-liq-source').value;
+            const amount = Number(document.getElementById('modal-liq-amount').value) || 0;
+            const note = document.getElementById('modal-liq-note').value.trim();
+
+            if (amount <= 0) {
+                showToast('يرجى إدخال مبلغ صحيح', 'error');
+                return;
+            }
+
+            try {
+                await window.fs.addDoc(window.fs.collection(window.dbInstance, "liquidity"), {
+                    type: 'IN',
+                    source: source,
+                    amount: amount,
+                    note: note || source,
+                    createdAt: window.fs.serverTimestamp()
+                });
+
+                showToast('تمت إضافة السيولة بنجاح إلى الكاش باليد');
+                closeAddLiquidityModal();
+            } catch (err) {
+                console.error(err);
+                showToast('حدث خطأ أثناء إضافة السيولة', 'error');
+            }
+        }
+
+        function openTransferLiquidityModal() {
+            const liqTotal = window.state.liquidity.reduce((acc, curr) => {
+                const amt = Number(curr.amount) || 0;
+                return curr.type === 'OUT' ? acc - amt : acc + amt;
+            }, 0);
+
+            document.getElementById('transfer-max-liquidity').textContent = liqTotal.toLocaleString() + ' SDG';
+            document.getElementById('modal-trans-amount').value = '';
+            document.getElementById('modal-trans-note').value = '';
+
+            const selectDebt = document.getElementById('modal-trans-our-debt-id');
+            const pendingOurDebts = window.state.ourDebts.filter(d => d.remainingAmount > 0);
+            selectDebt.innerHTML = pendingOurDebts.length === 0 ? 
+                '<option value="">لا توجد ديون مستحقة علينا</option>' :
+                pendingOurDebts.map(d => `<option value="${d.id}">${d.supplierName} (متبقي: ${d.remainingAmount} SDG)</option>`).join('');
+
+            document.getElementById('modal-trans-destination').onchange = (e) => {
+                const debtContainer = document.getElementById('trans-debt-container');
+                if (e.target.value === 'PAY_OUR_DEBT') {
+                    debtContainer.classList.remove('hidden');
+                } else {
+                    debtContainer.classList.add('hidden');
+                }
+            };
+            document.getElementById('trans-debt-container').classList.add('hidden');
+
+            document.getElementById('transfer-liquidity-modal').classList.remove('hidden');
+        }
+
+        function closeTransferLiquidityModal() {
+            document.getElementById('transfer-liquidity-modal').classList.add('hidden');
+        }
+
+        async function submitTransferLiquidity() {
+            const amount = Number(document.getElementById('modal-trans-amount').value) || 0;
+            const destination = document.getElementById('modal-trans-destination').value;
+            const note = document.getElementById('modal-trans-note').value.trim();
+
+            const liqTotal = window.state.liquidity.reduce((acc, curr) => {
+                const amt = Number(curr.amount) || 0;
+                return curr.type === 'OUT' ? acc - amt : acc + amt;
+            }, 0);
+
+            if (amount <= 0 || amount > liqTotal) {
+                showToast(`المبلغ غير متاح. السيولة الحالية: ${liqTotal} SDG`, 'error');
+                return;
+            }
+            if (!note) {
+                showToast('يرجى إدخال ملاحظة للتحويل', 'error');
+                return;
+            }
+
+            try {
+                await window.fs.addDoc(window.fs.collection(window.dbInstance, "liquidity"), {
+                    type: 'OUT',
+                    source: 'تحويل صادر',
+                    amount: amount,
+                    note: note,
+                    createdAt: window.fs.serverTimestamp()
+                });
+
+                if (destination === 'TREASURY') {
+                    await window.fs.addDoc(window.fs.collection(window.dbInstance, "treasury"), {
+                        type: 'IN',
+                        amount: amount,
+                        note: `توريد نقدي من السيولة باليد: ${note}`,
+                        createdAt: window.fs.serverTimestamp()
+                    });
+                    showToast('تم تحويل المبلغ بنجاح إلى الخزنة العامة');
+                } else {
+                    const debtId = document.getElementById('modal-trans-our-debt-id').value;
+                    const debtDoc = window.state.ourDebts.find(d => d.id === debtId);
+                    if (!debtDoc) {
+                        showToast('يرجى اختيار جهة دائنة صحيحة', 'error');
+                        return;
+                    }
+
+                    if (amount > debtDoc.remainingAmount) {
+                        showToast('مبلغ التحويل أكبر من الدين المتبقي لهذه الجهة', 'error');
+                        return;
+                    }
+
+                    const newPaid = (Number(debtDoc.paidAmount) || 0) + amount;
+                    const newRemaining = debtDoc.remainingAmount - amount;
+
+                    await window.fs.updateDoc(window.fs.doc(window.dbInstance, "our_debts", debtId), {
+                        paidAmount: newPaid,
+                        remainingAmount: newRemaining
+                    });
+
+                    showToast(`تم سداد مبلغ ${amount} SDG للجهة ${debtDoc.supplierName} من السيولة بنجاح`);
+                }
+
+                closeTransferLiquidityModal();
+            } catch (err) {
+                console.error(err);
+                showToast('حدث خطأ أثناء عملية التحويل', 'error');
+            }
         }
 
         function renderInventoryTable() {
@@ -1178,6 +1515,7 @@
 
         async function processSaleSubmit() {
             const customerName = document.getElementById('sale-customer-name').value.trim();
+            const destination = document.getElementById('sale-destination').value;
             const paymentType = document.getElementById('sale-payment-type').value;
 
             if (!customerName) {
@@ -1239,12 +1577,22 @@
                 }
 
                 if (paidCash > 0) {
-                    await window.fs.addDoc(window.fs.collection(window.dbInstance, "treasury"), {
-                        type: 'IN',
-                        amount: paidCash,
-                        note: `إيراد مبيعات شرائح (${window.state.currentSaleType === 'SINGLE' ? 'فردي' : 'جملة'}) - العميل: ${customerName}`,
-                        createdAt: window.fs.serverTimestamp()
-                    });
+                    if (destination === 'LIQUIDITY') {
+                        await window.fs.addDoc(window.fs.collection(window.dbInstance, "liquidity"), {
+                            type: 'IN',
+                            source: 'إيراد بيع شرائح',
+                            amount: paidCash,
+                            note: `مبيعات شرائح (${window.state.currentSaleType === 'SINGLE' ? 'فردي' : 'جملة'}) - العميل: ${customerName}`,
+                            createdAt: window.fs.serverTimestamp()
+                        });
+                    } else {
+                        await window.fs.addDoc(window.fs.collection(window.dbInstance, "treasury"), {
+                            type: 'IN',
+                            amount: paidCash,
+                            note: `إيراد مبيعات شرائح - العميل: ${customerName}`,
+                            createdAt: window.fs.serverTimestamp()
+                        });
+                    }
                 }
 
                 if (remainingDebt > 0) {
@@ -1280,7 +1628,7 @@
             const sorted = [...window.state.treasury].sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
 
             if (sorted.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-slate-500">لا توجد حركات مالية في الخزنة</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-slate-500">لا توجد حركات مالية في الخزنة العامة</td></tr>`;
                 return;
             }
 
@@ -1326,7 +1674,7 @@
                     createdAt: window.fs.serverTimestamp()
                 });
 
-                showToast('تم خصم المبلغ من الخزنة وتسجيل المنصرف بنجاح');
+                showToast('تم خصم المبلغ من الخزنة العامة وتسجيل المنصرف بنجاح');
                 closeWithdrawModal();
             } catch (err) {
                 console.error(err);
@@ -1353,7 +1701,7 @@
                     <td class="px-4 py-3 text-center">
                         ${d.remainingAmount > 0 ? `
                             <button onclick="openPayDebtModal('${d.id}', '${d.customerName}', ${d.remainingAmount})" class="glow-button px-3 py-1.5 rounded-lg text-white font-bold text-xs">
-                                تسديد مبلغ
+                                تحصيل وسداد
                             </button>
                         ` : `<span class="px-2 py-1 text-xs text-emerald-600 bg-emerald-100 rounded-md font-bold">مسدد بالكامل</span>`}
                     </td>
@@ -1376,12 +1724,13 @@
         async function submitPayDebt() {
             const debtId = document.getElementById('pay-debt-id').value;
             const payAmount = Number(document.getElementById('pay-debt-amount').value) || 0;
+            const destination = document.getElementById('pay-debt-destination').value;
 
             const debtDoc = window.state.debts.find(d => d.id === debtId);
             if (!debtDoc) return;
 
             if (payAmount <= 0 || payAmount > debtDoc.remainingAmount) {
-                showToast(`يرجى إدخال مبلغ سداد بين 1 و ${debtDoc.remainingAmount} SDG`, 'error');
+                showToast(`يرجى إدخال مبلغ تحصيل بين 1 و ${debtDoc.remainingAmount} SDG`, 'error');
                 return;
             }
 
@@ -1394,23 +1743,32 @@
                     remainingAmount: newRemaining
                 });
 
-                await window.fs.addDoc(window.fs.collection(window.dbInstance, "treasury"), {
-                    type: 'IN',
-                    amount: payAmount,
-                    note: `سداد دين مستحق - العميل: ${debtDoc.customerName}`,
-                    createdAt: window.fs.serverTimestamp()
-                });
+                if (destination === 'LIQUIDITY') {
+                    await window.fs.addDoc(window.fs.collection(window.dbInstance, "liquidity"), {
+                        type: 'IN',
+                        source: 'استرداد دين من عميل',
+                        amount: payAmount,
+                        note: `تحصيل دين العميل: ${debtDoc.customerName}`,
+                        createdAt: window.fs.serverTimestamp()
+                    });
+                } else {
+                    await window.fs.addDoc(window.fs.collection(window.dbInstance, "treasury"), {
+                        type: 'IN',
+                        amount: payAmount,
+                        note: `تحصيل دين مستحق - العميل: ${debtDoc.customerName}`,
+                        createdAt: window.fs.serverTimestamp()
+                    });
+                }
 
-                showToast('تم تسديد الدين وإضافة المبلغ إلى الخزنة بنجاح');
+                showToast('تم تحصيل الدين وتوجيه المبلغ بنجاح');
                 closePayDebtModal();
 
             } catch (err) {
                 console.error(err);
-                showToast('حدث خطأ أثناء إجراء السداد', 'error');
+                showToast('حدث خطأ أثناء إجراء التحصيل', 'error');
             }
         }
 
-        // --- دوال قسم الديون الخاصة بنا (علينا للغير) ---
         function openAddOurDebtModal() {
             document.getElementById('add-our-debt-modal').classList.remove('hidden');
         }
@@ -1495,6 +1853,7 @@
         async function submitPayOurDebt() {
             const debtId = document.getElementById('pay-our-debt-id').value;
             const payAmount = Number(document.getElementById('pay-our-debt-amount').value) || 0;
+            const source = document.getElementById('pay-our-debt-source').value;
 
             const debtDoc = window.state.ourDebts.find(d => d.id === debtId);
             if (!debtDoc) return;
@@ -1513,14 +1872,24 @@
                     remainingAmount: newRemaining
                 });
 
-                await window.fs.addDoc(window.fs.collection(window.dbInstance, "treasury"), {
-                    type: 'OUT',
-                    amount: payAmount,
-                    note: `سداد جزء من دين علينا - الجهة: ${debtDoc.supplierName}`,
-                    createdAt: window.fs.serverTimestamp()
-                });
+                if (source === 'LIQUIDITY') {
+                    await window.fs.addDoc(window.fs.collection(window.dbInstance, "liquidity"), {
+                        type: 'OUT',
+                        source: 'سداد دين علينا',
+                        amount: payAmount,
+                        note: `سداد للجهة: ${debtDoc.supplierName}`,
+                        createdAt: window.fs.serverTimestamp()
+                    });
+                } else {
+                    await window.fs.addDoc(window.fs.collection(window.dbInstance, "treasury"), {
+                        type: 'OUT',
+                        amount: payAmount,
+                        note: `سداد دين علينا - الجهة: ${debtDoc.supplierName}`,
+                        createdAt: window.fs.serverTimestamp()
+                    });
+                }
 
-                showToast('تم تسديد الدين للجهة وخصم المبلغ من الخزنة بنجاح');
+                showToast('تم تسديد الدين للجهة بنجاح');
                 closePayOurDebtModal();
 
             } catch (err) {
@@ -1529,7 +1898,6 @@
             }
         }
 
-        // --- دوال قسم شرائح بالنسبة (المندوبين - عهدة كمية) ---
         function openAssignBatchModal() {
             const activeCount = window.state.sims.filter(s => s.status === 'ACTIVE').length;
             document.getElementById('batch-available-sims-count').textContent = activeCount;
@@ -1568,7 +1936,6 @@
             }
 
             try {
-                // اقتطاع الشرائح من المخزن وتحويل حالتها إلى INACTIVE مؤقتاً
                 const selectedSims = activeSims.slice(0, count);
                 const simIds = selectedSims.map(s => s.id);
 
@@ -1578,7 +1945,6 @@
                     });
                 }
 
-                // تسجيل الدفعة في جدول commission_batches
                 await window.fs.addDoc(window.fs.collection(window.dbInstance, "commission_batches"), {
                     agentName: agentName,
                     totalQty: count,
@@ -1648,6 +2014,7 @@
         async function submitSettleBatch() {
             const batchId = document.getElementById('settle-batch-id').value;
             const soldCount = Number.parseInt(document.getElementById('settle-sold-count').value, 10) || 0;
+            const destination = document.getElementById('settle-destination').value;
 
             const batchDoc = window.state.commissionBatches.find(b => b.id === batchId);
             if (!batchDoc) return;
@@ -1657,17 +2024,15 @@
                 return;
             }
 
-            const totalAmountToTreasury = soldCount * batchDoc.unitPrice;
+            const totalAmount = soldCount * batchDoc.unitPrice;
 
             try {
                 const newRemaining = batchDoc.remainingQty - soldCount;
 
-                // 1. تحديث الدفعة بالسحابة
                 await window.fs.updateDoc(window.fs.doc(window.dbInstance, "commission_batches", batchId), {
                     remainingQty: newRemaining
                 });
 
-                // 2. تحديث الشرائح المرتبطة في المخزن إلى SOLD بحسب العدد المباع
                 const simsToUpdate = batchDoc.simIds.slice(0, soldCount);
                 for (const simId of simsToUpdate) {
                     await window.fs.updateDoc(window.fs.doc(window.dbInstance, "sims", simId), {
@@ -1677,15 +2042,24 @@
                     });
                 }
 
-                // 3. إضافة الثمن الإجمالي مباشرة إلى الخزنة كإيراد (IN)
-                await window.fs.addDoc(window.fs.collection(window.dbInstance, "treasury"), {
-                    type: 'IN',
-                    amount: totalAmountToTreasury,
-                    note: `تصفية بيع (${soldCount}) شريحة للمندوب: ${batchDoc.agentName}`,
-                    createdAt: window.fs.serverTimestamp()
-                });
+                if (destination === 'LIQUIDITY') {
+                    await window.fs.addDoc(window.fs.collection(window.dbInstance, "liquidity"), {
+                        type: 'IN',
+                        source: 'تصفية بيع شرائح مندوب',
+                        amount: totalAmount,
+                        note: `تصفية (${soldCount}) شريحة للمندوب: ${batchDoc.agentName}`,
+                        createdAt: window.fs.serverTimestamp()
+                    });
+                } else {
+                    await window.fs.addDoc(window.fs.collection(window.dbInstance, "treasury"), {
+                        type: 'IN',
+                        amount: totalAmount,
+                        note: `تصفية بيع شرائح للمندوب: ${batchDoc.agentName}`,
+                        createdAt: window.fs.serverTimestamp()
+                    });
+                }
 
-                showToast(`تمت تصفية ${soldCount} شريحة وإضافة ${totalAmountToTreasury.toLocaleString()} SDG إلى الخزنة بنجاح`);
+                showToast(`تمت تصفية ${soldCount} شريحة وإضافة ${totalAmount.toLocaleString()} SDG بنجاح`);
                 closeSettleBatchModal();
 
             } catch (err) {
