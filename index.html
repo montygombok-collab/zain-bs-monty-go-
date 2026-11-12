@@ -154,14 +154,13 @@
                 <i class="fa-solid fa-file-invoice-dollar text-rose-500 w-6 text-center text-lg"></i>
                 <span>الديون الخاصة بنا (علينا)</span>
             </button>
-            <!-- قسم شرائح بالنسبة (المندوبين بدون رأس مال) -->
             <button onclick="switchTab('commission-sims')" id="nav-commission-sims" class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-slate-600 hover:text-sky-600 hover:bg-white/80 transition-all text-right w-full">
                 <i class="fa-solid fa-handshake text-purple-600 w-6 text-center text-lg"></i>
                 <span>شرائح بالنسبة (المندوبين)</span>
             </button>
         </nav>
 
-        <!-- زر تفريغ البيانات (إعادة ضبط للصفر) -->
+        <!-- زر تفريغ البيانات -->
         <div class="mt-3 pt-3 border-t border-slate-200">
             <button onclick="confirmResetSystem()" class="flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-rose-600 hover:bg-rose-50 border border-rose-200 transition-all text-right w-full shadow-sm">
                 <i class="fa-solid fa-triangle-exclamation text-rose-500 w-6 text-center text-lg"></i>
@@ -187,7 +186,7 @@
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h2 class="text-2xl md:text-3xl font-bold font-tajawal text-slate-900">نظرة عامة على النشاط</h2>
-                    <p class="text-slate-500 text-sm mt-1">ملخص مبيعات الشرائح، الخزنة، الديون، وشرائح المندوبين</p>
+                    <p class="text-slate-500 text-sm mt-1">ملخص مبيعات الشرائح، الخزنة، الديون، وعهد المندوبين</p>
                 </div>
                 <button onclick="switchTab('sales')" class="glow-button px-5 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 text-sm self-start md:self-auto">
                     <i class="fa-solid fa-plus"></i>
@@ -243,9 +242,9 @@
 
                 <div class="glass-card p-5 rounded-2xl flex items-center justify-between">
                     <div>
-                        <p class="text-xs text-purple-600 font-semibold mb-1">شرائح معلقة مع مندوبين</p>
-                        <h3 id="stat-total-commission-sims" class="text-2xl font-extrabold text-purple-600">0</h3>
-                        <p class="text-[11px] text-slate-500 mt-1">تحت النظام بالنسبة</p>
+                        <p class="text-xs text-purple-600 font-semibold mb-1">دفعات عهدة المندوبين</p>
+                        <h3 id="stat-total-commission-batches" class="text-2xl font-extrabold text-purple-600">0</h3>
+                        <p class="text-[11px] text-slate-500 mt-1">دفعات شرائح بالنسبة</p>
                     </div>
                     <div class="w-12 h-12 rounded-xl bg-purple-50 border border-purple-200 flex items-center justify-center text-purple-600 text-xl">
                         <i class="fa-solid fa-handshake"></i>
@@ -586,35 +585,35 @@
             </div>
         </section>
 
-        <!-- TAB 7: COMMISSION SIMS (شرائح بالنسبة للمندوبين بدون رأس مال) -->
+        <!-- TAB 7: COMMISSION SIMS (شرائح بالنسبة للمندوبين - دفعات كمية) -->
         <section id="tab-commission-sims" class="tab-content hidden flex flex-col gap-6">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h2 class="text-2xl md:text-3xl font-bold font-tajawal text-slate-900">شرائح بالنسبة (المندوبين بدون رأس مال)</h2>
-                    <p class="text-slate-500 text-sm mt-1">تسليم شرائح عهدة للمندوبين، وتحديد سعر بيع متفق عليه ونسبة عمولتهم، وتصفية المبيعات</p>
+                    <h2 class="text-2xl md:text-3xl font-bold font-tajawal text-slate-900">شرائح بالنسبة (المندوبين - عهدة كمية)</h2>
+                    <p class="text-slate-500 text-sm mt-1">تسليم دفعة كمية من الشرائح للمندوب دفعة واحدة، ومتابعة ما باع وما المتبقي، وتصفية الأموال</p>
                 </div>
-                <button onclick="openAssignCommissionModal()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-5 py-2.5 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 text-sm">
-                    <i class="fa-solid fa-handshake-angle"></i>
-                    <span>تسليم شرائح لمندوب (عهدة)</span>
+                <button onclick="openAssignBatchModal()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-5 py-2.5 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-solid fa-boxes-stacked"></i>
+                    <span>تسليم دفعة شرائح لمندوب (كمية)</span>
                 </button>
             </div>
 
-            <!-- Commission Sims Table -->
+            <!-- Commission Batches Table -->
             <div class="glass-panel rounded-2xl overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-right text-slate-700">
                         <thead class="text-xs uppercase bg-purple-50 text-purple-900 font-bold">
                             <tr>
                                 <th class="px-4 py-3">اسم المندوب</th>
-                                <th class="px-4 py-3">رقم الشريحة / السيريال</th>
-                                <th class="px-4 py-3">سعر البيع المطلوب</th>
-                                <th class="px-4 py-3">نسبة المندوب (عمولته)</th>
-                                <th class="px-4 py-3">الحالة</th>
-                                <th class="px-4 py-3 text-center">إجراء التصفية / الاسترجاع</th>
+                                <th class="px-4 py-3">الكمية المسلمة</th>
+                                <th class="px-4 py-3">سعر البيع للشريحة</th>
+                                <th class="px-4 py-3">عمولة المندوب</th>
+                                <th class="px-4 py-3">الحالة / المتبقي</th>
+                                <th class="px-4 py-3 text-center">إجراء التصفية / الإدارة</th>
                             </tr>
                         </thead>
-                        <tbody id="commission-sims-table-body" class="divide-y divide-slate-100">
-                            <tr><td colspan="6" class="text-center py-6 text-slate-400">جاري تحميل سجل شرائح المندوبين...</td></tr>
+                        <tbody id="commission-batches-table-body" class="divide-y divide-slate-100">
+                            <tr><td colspan="6" class="text-center py-6 text-slate-400">جاري تحميل دفعات شرائح المندوبين...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -632,13 +631,12 @@
             </div>
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">رقم الشريحة / السيريال *</label>
-                    <input type="text" id="modal-sim-serial" placeholder="أدخل رقم الشريحة أو السيريال" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-sky-500 shadow-sm">
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">رقم الشريحة / السيريال الأساسي *</label>
+                    <input type="text" id="modal-sim-serial" placeholder="أدخل السيريال أو الرقم" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-sky-500 shadow-sm">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1">الكمية المراد إضافتها *</label>
                     <input type="number" id="modal-sim-quantity" min="1" max="500" value="1" placeholder="1" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-sky-500 shadow-sm">
-                    <p class="text-xs text-slate-500 mt-1">عند إدخال أكثر من شريحة، سيُستخدم الرقم المدخل كسيريال أساسي وتُضاف أرقام متسلسلة تلقائياً.</p>
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1">التكلفة / السعر الأساسي (SDG)</label>
@@ -752,7 +750,6 @@
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1">المبلغ المراد سداده كاش الآن من الخزنة (SDG) *</label>
                     <input type="number" id="pay-our-debt-amount" placeholder="أدخل المبلغ المسدد" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-amber-500 shadow-sm">
-                    <p class="text-[11px] text-slate-500 mt-1">سيتم خصم هذا المبلغ تلقائياً من الخزنة وتسجيله كمنصرف.</p>
                 </div>
             </div>
             <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
@@ -762,37 +759,62 @@
         </div>
     </div>
 
-    <!-- MODAL 6: ASSIGN COMMISSION SIM (تسليم شريحة لمندوب بدون رأس مال) -->
-    <div id="assign-commission-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/30 backdrop-blur-md hidden">
+    <!-- MODAL 6: ASSIGN BATCH OF COMMISSION SIMS (تسليم كمية شرائح عهدة للمندوب) -->
+    <div id="assign-batch-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/30 backdrop-blur-md hidden">
         <div class="glass-panel w-full max-w-lg p-6 rounded-2xl border border-purple-200 space-y-4 shadow-2xl">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                <h3 class="font-bold text-lg text-purple-700 font-tajawal">تسليم شريحة عهدة لمندوب (نسبة بدون رأس مال)</h3>
-                <button onclick="closeAssignCommissionModal()" class="text-slate-400 hover:text-slate-700 text-lg"><i class="fa-solid fa-times"></i></button>
+                <h3 class="font-bold text-lg text-purple-700 font-tajawal">تسليم دفعة شرائح عهدة لمندوب (كمية)</h3>
+                <button onclick="closeAssignBatchModal()" class="text-slate-400 hover:text-slate-700 text-lg"><i class="fa-solid fa-times"></i></button>
             </div>
             <div class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1">اسم المندوب / الشريك *</label>
-                    <input type="text" id="modal-comm-agent" placeholder="اسم المندوب الكامل" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-purple-500 shadow-sm">
+                    <input type="text" id="modal-batch-agent" placeholder="اسم المندوب الكامل" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-purple-500 shadow-sm">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">اختر الشريحة النشطة من المخزن *</label>
-                    <select id="modal-comm-sim-select" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-purple-500 shadow-sm">
-                        <option value="">-- اختر شريحة نشطة --</option>
-                    </select>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">عدد الشرائح المطلوبة (الكمية) *</label>
+                    <input type="number" id="modal-batch-count" min="1" placeholder="مثال: 20" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-purple-500 shadow-sm">
+                    <span class="text-[11px] text-purple-600 font-semibold mt-1 block">الشرائح النشطة المتاحة بالمخزن: <strong id="batch-available-sims-count">0</strong></span>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">سعر البيع المطلوب من المندوب (SDG) *</label>
-                    <input type="number" id="modal-comm-price" placeholder="مثال: 6000" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-purple-500 shadow-sm">
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">سعر بيع الشريحة الواحدة (SDG) *</label>
+                    <input type="number" id="modal-batch-price" placeholder="مثال: 6000" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-purple-500 shadow-sm">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">عمولة المندوب (نسبة مئوية % أو مبلغ ثابت بالجنيه) *</label>
-                    <input type="text" id="modal-comm-rate" placeholder="مثال: 1000 SDG أو 15%" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-purple-500 shadow-sm">
-                    <p class="text-[11px] text-slate-500 mt-1">اكتب قيمة العمولة المستحقة للمندوب عند بيعها (مثلاً 1000 جنيه أو نسبة).</p>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">عمولة المندوب للشريحة (نسبة أو مبلغ ثابت) *</label>
+                    <input type="text" id="modal-batch-rate" placeholder="مثال: 1000 SDG أو 15%" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-purple-500 shadow-sm">
                 </div>
             </div>
             <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
-                <button onclick="closeAssignCommissionModal()" class="px-4 py-2 rounded-xl text-slate-600 text-sm hover:bg-slate-100">إلغاء</button>
-                <button onclick="submitAssignCommission()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-5 py-2 rounded-xl text-sm shadow-md">تسليم العهدة للمندوب</button>
+                <button onclick="closeAssignBatchModal()" class="px-4 py-2 rounded-xl text-slate-600 text-sm hover:bg-slate-100">إلغاء</button>
+                <button onclick="submitAssignBatch()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-5 py-2 rounded-xl text-sm shadow-md">تسليم الدفعة للمندوب</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 7: SETTLE BATCH (تصفية عدد معين أو الدفعة كامة للمندوب) -->
+    <div id="settle-batch-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/30 backdrop-blur-md hidden">
+        <div class="glass-panel w-full max-w-lg p-6 rounded-2xl border border-emerald-200 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="font-bold text-lg text-emerald-700 font-tajawal">تصفية مبيعات دفعة المندوب: <span id="settle-agent-name" class="text-purple-600"></span></h3>
+                <button onclick="closeSettleBatchModal()" class="text-slate-400 hover:text-slate-700 text-lg"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <input type="hidden" id="settle-batch-id">
+            <div class="space-y-4">
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1">
+                    <p>إجمالي الكمية المسلمة: <strong id="settle-total-qty" class="text-slate-900"></strong></p>
+                    <p>الشرائح المتبقية عهدة الآن: <strong id="settle-remaining-qty" class="text-purple-600 font-bold"></strong></p>
+                    <p>سعر بيع الشريحة: <strong id="settle-unit-price" class="text-sky-600"></strong></p>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">عدد الشرائح التي باعها وأحضر ثمنها الآن *</label>
+                    <input type="number" id="settle-sold-count" min="1" placeholder="مثال: 5" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-emerald-500 shadow-sm">
+                    <p class="text-[11px] text-slate-500 mt-1">سيتم حساب ثمنها الإجمالي وإضافته مباشرة للخزنة كإيراد.</p>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+                <button onclick="closeSettleBatchModal()" class="px-4 py-2 rounded-xl text-slate-600 text-sm hover:bg-slate-100">إلغاء</button>
+                <button onclick="submitSettleBatch()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-5 py-2 rounded-xl text-sm shadow-md">تأكيد إضافتها للخزنة</button>
             </div>
         </div>
     </div>
@@ -823,7 +845,7 @@
             treasury: [],
             debts: [],
             ourDebts: [],
-            commissionSims: [],
+            commissionBatches: [],
             currentSaleType: 'SINGLE'
         };
 
@@ -888,7 +910,6 @@
                 renderDashboardStats();
                 renderInventoryTable();
                 populateSimSelectOptions();
-                populateCommissionSimSelect();
             }, (error) => console.error("Error SIMs:", error));
 
             window.fs.onSnapshot(window.fs.collection(window.dbInstance, "treasury"), (snapshot) => {
@@ -909,12 +930,12 @@
                 renderOurDebtsTable();
             }, (error) => console.error("Error Our Debts:", error));
 
-            // الاستماع لشرائح المندوبين (commission_sims)
-            window.fs.onSnapshot(window.fs.collection(window.dbInstance, "commission_sims"), (snapshot) => {
-                window.state.commissionSims = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            // الاستماع لعهد دفعات المندوبين (commission_batches)
+            window.fs.onSnapshot(window.fs.collection(window.dbInstance, "commission_batches"), (snapshot) => {
+                window.state.commissionBatches = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 renderDashboardStats();
-                renderCommissionSimsTable();
-            }, (error) => console.error("Error Commission Sims:", error));
+                renderCommissionBatchesTable();
+            }, (error) => console.error("Error Commission Batches:", error));
 
             switchTab('dashboard');
         }
@@ -929,7 +950,7 @@
             try {
                 showToast("جاري تفريغ البيانات من السحابة...", "info");
 
-                const collections = ["sims", "treasury", "debts", "our_debts", "commission_sims"];
+                const collections = ["sims", "treasury", "debts", "our_debts", "commission_batches"];
                 for (const colName of collections) {
                     const snap = await window.fs.getDocs(window.fs.collection(window.dbInstance, colName));
                     for (const d of snap.docs) {
@@ -953,13 +974,13 @@
 
             const totalDebts = window.state.debts.reduce((acc, curr) => acc + (Number(curr.remainingAmount) || 0), 0);
             const totalOurDebts = window.state.ourDebts.reduce((acc, curr) => acc + (Number(curr.remainingAmount) || 0), 0);
-            const pendingCommissionSims = window.state.commissionSims.filter(s => s.status === 'PENDING').length;
+            const activeBatches = window.state.commissionBatches.filter(b => b.remainingQty > 0).length;
 
             document.getElementById('stat-active-sims').textContent = activeSims;
             document.getElementById('stat-treasury-balance').textContent = balance.toLocaleString('ar-SD') + ' SDG';
             document.getElementById('stat-total-debts').textContent = totalDebts.toLocaleString('ar-SD') + ' SDG';
             document.getElementById('stat-total-our-debts').textContent = totalOurDebts.toLocaleString('ar-SD') + ' SDG';
-            document.getElementById('stat-total-commission-sims').textContent = pendingCommissionSims;
+            document.getElementById('stat-total-commission-batches').textContent = activeBatches;
 
             document.getElementById('treasury-page-balance').textContent = balance.toLocaleString('ar-SD') + ' SDG';
             document.getElementById('treasury-total-in').textContent = totalIn.toLocaleString('ar-SD') + ' SDG';
@@ -1073,13 +1094,6 @@
                 ? [serial]
                 : Array.from({ length: quantity }, (_, i) => `${serial}-${String(i + 1).padStart(String(quantity).length, '0')}`);
 
-            const existingSerials = new Set((window.state.sims || []).map(sim => String(sim.serialNumber || '').trim().toLowerCase()));
-            const duplicate = serials.find(value => existingSerials.has(value.toLowerCase()));
-            if (duplicate) {
-                showToast(`السيريال ${duplicate} موجود مسبقاً بالمخزن`, 'error');
-                return;
-            }
-
             try {
                 for (const itemSerial of serials) {
                     await window.fs.addDoc(window.fs.collection(window.dbInstance, "sims"), {
@@ -1116,14 +1130,6 @@
             
             select.innerHTML = '<option value="">-- اختر شريحة نشطة من المخزن --</option>' +
                 activeSims.map(s => `<option value="${s.id}">${s.serialNumber} (التكلفة: ${s.cost} SDG)</option>`).join('');
-        }
-
-        function populateCommissionSimSelect() {
-            const select = document.getElementById('modal-comm-sim-select');
-            const activeSims = window.state.sims.filter(s => s.status === 'ACTIVE');
-            
-            select.innerHTML = '<option value="">-- اختر شريحة نشطة --</option>' +
-                activeSims.map(s => `<option value="${s.id}">${s.serialNumber}</option>`).join('');
         }
 
         function setSaleType(type) {
@@ -1523,102 +1529,100 @@
             }
         }
 
-        // --- دوال قسم شرائح بالنسبة (المندوبين بدون رأس مال) ---
-        function openAssignCommissionModal() {
-            populateCommissionSimSelect();
-            document.getElementById('assign-commission-modal').classList.remove('hidden');
+        // --- دوال قسم شرائح بالنسبة (المندوبين - عهدة كمية) ---
+        function openAssignBatchModal() {
+            const activeCount = window.state.sims.filter(s => s.status === 'ACTIVE').length;
+            document.getElementById('batch-available-sims-count').textContent = activeCount;
+            document.getElementById('assign-batch-modal').classList.remove('hidden');
         }
-        function closeAssignCommissionModal() {
-            document.getElementById('assign-commission-modal').classList.add('hidden');
-            document.getElementById('modal-comm-agent').value = '';
-            document.getElementById('modal-comm-price').value = '';
-            document.getElementById('modal-comm-rate').value = '';
+        function closeAssignBatchModal() {
+            document.getElementById('assign-batch-modal').classList.add('hidden');
+            document.getElementById('modal-batch-agent').value = '';
+            document.getElementById('modal-batch-count').value = '';
+            document.getElementById('modal-batch-price').value = '';
+            document.getElementById('modal-batch-rate').value = '';
         }
 
-        async function submitAssignCommission() {
-            const agentName = document.getElementById('modal-comm-agent').value.trim();
-            const simId = document.getElementById('modal-comm-sim-select').value;
-            const targetPrice = Number(document.getElementById('modal-comm-price').value) || 0;
-            const commissionNote = document.getElementById('modal-comm-rate').value.trim();
+        async function submitAssignBatch() {
+            const agentName = document.getElementById('modal-batch-agent').value.trim();
+            const count = Number.parseInt(document.getElementById('modal-batch-count').value, 10) || 0;
+            const unitPrice = Number(document.getElementById('modal-batch-price').value) || 0;
+            const commissionNote = document.getElementById('modal-batch-rate').value.trim();
 
             if (!agentName) {
                 showToast('يرجى إدخال اسم المندوب', 'error');
                 return;
             }
-            if (!simId) {
-                showToast('يرجى اختيار شريحة من المخزن', 'error');
+            const activeSims = window.state.sims.filter(s => s.status === 'ACTIVE');
+            if (count <= 0 || count > activeSims.length) {
+                showToast(`الكمية غير متاحة بالمخزن. الشرائح النشطة: ${activeSims.length}`, 'error');
                 return;
             }
-            if (targetPrice <= 0) {
-                showToast('يرجى إدخال سعر البيع المطلوب', 'error');
+            if (unitPrice <= 0) {
+                showToast('يرجى إدخال سعر بيع الشريحة', 'error');
                 return;
             }
             if (!commissionNote) {
-                showToast('يرجى إدخال نسبة أو قيمة عمولة المندوب', 'error');
+                showToast('يرجى إدخال عمولة المندوب', 'error');
                 return;
             }
 
-            const simObj = window.state.sims.find(s => s.id === simId);
-            if (!simObj) return;
-
             try {
-                // 1. تسجيل الشريحة في جدول شرائح المندوبين (commission_sims) كمعلقة (PENDING)
-                await window.fs.addDoc(window.fs.collection(window.dbInstance, "commission_sims"), {
+                // اقتطاع الشرائح من المخزن وتحويل حالتها إلى INACTIVE مؤقتاً
+                const selectedSims = activeSims.slice(0, count);
+                const simIds = selectedSims.map(s => s.id);
+
+                for (const simId of simIds) {
+                    await window.fs.updateDoc(window.fs.doc(window.dbInstance, "sims", simId), {
+                        status: 'INACTIVE'
+                    });
+                }
+
+                // تسجيل الدفعة في جدول commission_batches
+                await window.fs.addDoc(window.fs.collection(window.dbInstance, "commission_batches"), {
                     agentName: agentName,
-                    simId: simId,
-                    serialNumber: simObj.serialNumber,
-                    targetPrice: targetPrice,
+                    totalQty: count,
+                    remainingQty: count,
+                    unitPrice: unitPrice,
                     commissionNote: commissionNote,
-                    status: 'PENDING', // PENDING معلقة مع المندوب، SOLD تم بيعها وتصفيتها، RETURNED مسترجعة
+                    simIds: simIds,
                     assignedAt: window.fs.serverTimestamp()
                 });
 
-                // 2. تغيير حالة الشريحة في المخزن الرئيسي إلى INACTIVE أو حجزها مؤقتاً لكي لا تُباع مرتين
-                await window.fs.updateDoc(window.fs.doc(window.dbInstance, "sims", simId), {
-                    status: 'INACTIVE'
-                });
-
-                showToast(`تم تسليم الشريحة (${simObj.serialNumber}) للمندوب ${agentName} بنجاح`);
-                closeAssignCommissionModal();
+                showToast(`تم تسليم دفعة من ${count} شريحة للمندوب ${agentName} بنجاح`);
+                closeAssignBatchModal();
             } catch (err) {
                 console.error(err);
-                showToast('حدث خطأ أثناء تسليم الشريحة للمندوب', 'error');
+                showToast('حدث خطأ أثناء تسليم الدفعة', 'error');
             }
         }
 
-        function renderCommissionSimsTable() {
-            const tbody = document.getElementById('commission-sims-table-body');
-            const sorted = [...window.state.commissionSims].sort((a,b) => (b.assignedAt?.seconds || 0) - (a.assignedAt?.seconds || 0));
+        function renderCommissionBatchesTable() {
+            const tbody = document.getElementById('commission-batches-table-body');
+            const sorted = [...window.state.commissionBatches].sort((a,b) => (b.assignedAt?.seconds || 0) - (a.assignedAt?.seconds || 0));
 
             if (sorted.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-500">لا توجد شرائح مسلمة للمندوبين حالياً</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-500">لا توجد دفعات شرائح مسجلة للمندوبين حالياً</td></tr>`;
                 return;
             }
 
-            tbody.innerHTML = sorted.map(item => {
-                let statusBadge = item.status === 'PENDING'
-                    ? `<span class="px-2.5 py-1 text-xs rounded-full bg-purple-100 text-purple-700 font-semibold border border-purple-200">عهدة معلقة (لم تصفى)</span>`
-                    : item.status === 'SOLD'
-                    ? `<span class="px-2.5 py-1 text-xs rounded-full bg-emerald-100 text-emerald-700 font-semibold border border-emerald-200">تم بيعها وتصفيتها</span>`
-                    : `<span class="px-2.5 py-1 text-xs rounded-full bg-slate-100 text-slate-500 font-semibold border border-slate-200">مسترجعة للمخزن</span>`;
+            tbody.innerHTML = sorted.map(batch => {
+                let statusBadge = batch.remainingQty === 0
+                    ? `<span class="px-2.5 py-1 text-xs rounded-full bg-emerald-100 text-emerald-700 font-semibold border border-emerald-200">تمت تصفيتها بالكامل</span>`
+                    : `<span class="px-2.5 py-1 text-xs rounded-full bg-purple-100 text-purple-700 font-semibold border border-purple-200">متبقي عهدة: ${batch.remainingQty} من ${batch.totalQty}</span>`;
 
                 return `
                     <tr class="hover:bg-white/5 transition-all">
-                        <td class="px-4 py-3 font-bold text-slate-900">${item.agentName}</td>
-                        <td class="px-4 py-3 font-mono text-purple-700 font-semibold">${item.serialNumber}</td>
-                        <td class="px-4 py-3 font-bold text-slate-800">${Number(item.targetPrice).toLocaleString()} SDG</td>
-                        <td class="px-4 py-3 text-sky-700 font-semibold">${item.commissionNote}</td>
+                        <td class="px-4 py-3 font-bold text-slate-900">${batch.agentName}</td>
+                        <td class="px-4 py-3 font-bold text-slate-700">${batch.totalQty} شريحة</td>
+                        <td class="px-4 py-3 text-sky-700 font-semibold">${Number(batch.unitPrice).toLocaleString()} SDG</td>
+                        <td class="px-4 py-3 text-purple-700 font-semibold">${batch.commissionNote}</td>
                         <td class="px-4 py-3">${statusBadge}</td>
                         <td class="px-4 py-3 text-center">
-                            ${item.status === 'PENDING' ? `
-                                <div class="flex items-center justify-center gap-2">
-                                    <button onclick="settleCommissionSim('${item.id}', '${item.simId}', ${item.targetPrice}, '${item.agentName}', '${item.serialNumber}')" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-xs shadow-sm">
-                                        تصفية البيع (دخلت الخزنة)
-                                    </button>
-                                    <button onclick="returnCommissionSim('${item.id}', '${item.simId}')" class="px-3 py-1 bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold rounded-lg text-xs">
-                                        استرجاع للمخزن
-                                    </button>
-                                </div>
+                            ${batch.remainingQty > 0 ? `
+                                <button onclick="openSettleBatchModal('${batch.id}', '${batch.agentName}', ${batch.totalQty}, ${batch.remainingQty}, ${batch.unitPrice})" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-xs shadow-sm">
+                                    تصفية مبيعات الدفعة
+                                </button>
                             ` : `<span class="text-xs text-slate-400">مكتملة</span>`}
                         </td>
                     </tr>
@@ -1626,58 +1630,67 @@
             }).join('');
         }
 
-        // تصفية شريحة المندوب (المندوب باعها وأحضر الثمن)
-        async function settleCommissionSim(recordId, simId, targetPrice, agentName, serialNumber) {
-            const confirmSettle = confirm(`هل تؤكد بيع وتصفية الشريحة (${serialNumber}) بواسطة المندوب ${agentName} وإضافة مبلغ ${targetPrice} SDG إلى الخزنة؟`);
-            if (!confirmSettle) return;
+        function openSettleBatchModal(batchId, agentName, totalQty, remainingQty, unitPrice) {
+            document.getElementById('settle-batch-id').value = batchId;
+            document.getElementById('settle-agent-name').textContent = agentName;
+            document.getElementById('settle-total-qty').textContent = totalQty;
+            document.getElementById('settle-remaining-qty').textContent = remainingQty;
+            document.getElementById('settle-unit-price').textContent = unitPrice.toLocaleString() + ' SDG';
+            document.getElementById('settle-sold-count').max = remainingQty;
+            document.getElementById('settle-sold-count').value = '';
+            document.getElementById('settle-batch-modal').classList.remove('hidden');
+        }
+
+        function closeSettleBatchModal() {
+            document.getElementById('settle-batch-modal').classList.add('hidden');
+        }
+
+        async function submitSettleBatch() {
+            const batchId = document.getElementById('settle-batch-id').value;
+            const soldCount = Number.parseInt(document.getElementById('settle-sold-count').value, 10) || 0;
+
+            const batchDoc = window.state.commissionBatches.find(b => b.id === batchId);
+            if (!batchDoc) return;
+
+            if (soldCount <= 0 || soldCount > batchDoc.remainingQty) {
+                showToast(`العدد المدخل غير صحيح. المتبقي عهدة: ${batchDoc.remainingQty}`, 'error');
+                return;
+            }
+
+            const totalAmountToTreasury = soldCount * batchDoc.unitPrice;
 
             try {
-                // 1. تحديث حالة السجل في commission_sims إلى SOLD
-                await window.fs.updateDoc(window.fs.doc(window.dbInstance, "commission_sims", recordId), {
-                    status: 'SOLD',
-                    settledAt: window.fs.serverTimestamp()
+                const newRemaining = batchDoc.remainingQty - soldCount;
+
+                // 1. تحديث الدفعة بالسحابة
+                await window.fs.updateDoc(window.fs.doc(window.dbInstance, "commission_batches", batchId), {
+                    remainingQty: newRemaining
                 });
 
-                // 2. تحديث الشريحة الأصلية في المخزن إلى SOLD
-                await window.fs.updateDoc(window.fs.doc(window.dbInstance, "sims", simId), {
-                    status: 'SOLD',
-                    soldTo: `مندوب بالنسبة: ${agentName}`,
-                    soldAt: window.fs.serverTimestamp()
-                });
+                // 2. تحديث الشرائح المرتبطة في المخزن إلى SOLD بحسب العدد المباع
+                const simsToUpdate = batchDoc.simIds.slice(0, soldCount);
+                for (const simId of simsToUpdate) {
+                    await window.fs.updateDoc(window.fs.doc(window.dbInstance, "sims", simId), {
+                        status: 'SOLD',
+                        soldTo: `مندوب بالنسبة: ${batchDoc.agentName}`,
+                        soldAt: window.fs.serverTimestamp()
+                    });
+                }
 
-                // 3. إضافة الثمن بالكامل كإيراد (IN) إلى الخزنة
+                // 3. إضافة الثمن الإجمالي مباشرة إلى الخزنة كإيراد (IN)
                 await window.fs.addDoc(window.fs.collection(window.dbInstance, "treasury"), {
                     type: 'IN',
-                    amount: targetPrice,
-                    note: `تصفية بيع شريحة بالنسبة للمندوب: ${agentName} (سيريال: ${serialNumber})`,
+                    amount: totalAmountToTreasury,
+                    note: `تصفية بيع (${soldCount}) شريحة للمندوب: ${batchDoc.agentName}`,
                     createdAt: window.fs.serverTimestamp()
                 });
 
-                showToast('تمت تصفية الشريحة وإضافة المبلغ إلى الخزنة بنجاح');
+                showToast(`تمت تصفية ${soldCount} شريحة وإضافة ${totalAmountToTreasury.toLocaleString()} SDG إلى الخزنة بنجاح`);
+                closeSettleBatchModal();
+
             } catch (err) {
                 console.error(err);
-                showToast('حدث خطأ أثناء تصفية الشريحة', 'error');
-            }
-        }
-
-        // استرجاع شريحة المندوب للمخزن (لم يبعها ويريد إرجاعها)
-        async function returnCommissionSim(recordId, simId) {
-            const confirmReturn = confirm("هل تريد حقاً إلغاء العهدة وإرجاع الشريحة للمخزن كـ (نشطة)؟");
-            if (!confirmReturn) return;
-
-            try {
-                await window.fs.updateDoc(window.fs.doc(window.dbInstance, "commission_sims", recordId), {
-                    status: 'RETURNED'
-                });
-
-                await window.fs.updateDoc(window.fs.doc(window.dbInstance, "sims", simId), {
-                    status: 'ACTIVE'
-                });
-
-                showToast('تم استرجاع الشريحة إلى المخزن النشط بنجاح');
-            } catch (err) {
-                console.error(err);
-                showToast('حدث خطأ أثناء الاسترجاع', 'error');
+                showToast('حدث خطأ أثناء تصفية الدفعة', 'error');
             }
         }
     </script>
