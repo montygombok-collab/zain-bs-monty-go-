@@ -152,8 +152,16 @@
             </button>
         </nav>
 
+        <!-- System Reset / Clear Button Added Here -->
+        <div class="mt-3 pt-3 border-t border-slate-200">
+            <button onclick="confirmResetSystem()" class="flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-rose-600 hover:bg-rose-50 border border-rose-200 transition-all text-right w-full shadow-sm">
+                <i class="fa-solid fa-triangle-exclamation text-rose-500 w-6 text-center text-lg"></i>
+                <span>تفريغ (إعادة ضبط للصفر)</span>
+            </button>
+        </div>
+
         <!-- System Connection Status -->
-        <div class="mt-auto pt-4 border-t border-slate-200 text-xs text-slate-500 flex items-center justify-between px-2">
+        <div class="mt-4 pt-4 border-t border-slate-200 text-xs text-slate-500 flex items-center justify-between px-2">
             <span class="flex items-center gap-2">
                 <span id="db-status-dot" class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></span>
                 <span id="db-status-text">جاري الاتصال...</span>
@@ -611,7 +619,7 @@
         </div>
     </div>
 
-    <!-- Application Script Logic & Firebase Integration (Combined to avoid scope errors) -->
+    <!-- Application Script Logic & Firebase Integration -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { 
@@ -619,7 +627,6 @@
             doc, updateDoc, deleteDoc, runTransaction, serverTimestamp, query, orderBy 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Your web app's Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBMM9yXT-LJfWPTv0AD2iD2rC2rnenYYik",
             authDomain: "crew-397b4.firebaseapp.com",
@@ -630,11 +637,9 @@
             measurementId: "G-DHSN624VNK"
         };
 
-        // Initialize Firebase & Firestore
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Global App State
         window.state = {
             sims: [],
             treasury: [],
@@ -642,23 +647,19 @@
             currentSaleType: 'SINGLE'
         };
 
-        // Expose Firebase functions globally to be accessible from standard UI functions
         window.dbInstance = db;
         window.fs = {
             collection, addDoc, getDocs, onSnapshot, doc, updateDoc, deleteDoc, runTransaction, serverTimestamp
         };
 
-        // Connection Indicator Status Update
         document.getElementById('db-status-dot').className = "w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse";
         document.getElementById('db-status-text').textContent = "متصل بالسحابة";
 
-        // Start Realtime Listeners
         initRealtimeData();
     </script>
 
     <!-- Application Script Logic -->
     <script>
-        // Navigation Management
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.nav-item').forEach(el => {
@@ -722,6 +723,43 @@
             }, (error) => console.error("Error Debts:", error));
 
             switchTab('dashboard');
+        }
+
+        // --- System Reset (تفريغ البيانات والبدء من الصفر) ---
+        async function confirmResetSystem() {
+            const confirmName = prompt("تحذير خطير!\nسيتم حذف كافة البيانات نهائياً (المخزن، الخزنة، السجلات، والديون) والبدء من الصفر.\nللتأكيد، اكتب كلمة (تفريغ):");
+            if (confirmName !== "تفريغ") {
+                if (confirmName !== null) showToast("تم إلغاء عملية التفريغ لعدم تطابق الكلمة", "error");
+                return;
+            }
+
+            try {
+                showToast("جاري تفريغ جميع البيانات...", "info");
+
+                // حذف جميع مستندات الشرائح
+                const simsSnap = await window.fs.getDocs(window.fs.collection(window.dbInstance, "sims"));
+                for (const d of simsSnap.docs) {
+                    await window.fs.deleteDoc(window.fs.doc(window.dbInstance, "sims", d.id));
+                }
+
+                // حذف جميع حركات الخزنة
+                const treasurySnap = await window.fs.getDocs(window.fs.collection(window.dbInstance, "treasury"));
+                for (const d of treasurySnap.docs) {
+                    await window.fs.deleteDoc(window.fs.doc(window.dbInstance, "treasury", d.id));
+                }
+
+                // حذف جميع الديون
+                const debtsSnap = await window.fs.getDocs(window.fs.collection(window.dbInstance, "debts"));
+                for (const d of debtsSnap.docs) {
+                    await window.fs.deleteDoc(window.fs.doc(window.dbInstance, "debts", d.id));
+                }
+
+                showToast("تم تفريغ النظام بنجاح والبدء من الصفر على الـ 0");
+                switchTab('dashboard');
+            } catch (err) {
+                console.error("Reset Error:", err);
+                showToast("حدث خطأ أثناء تفريغ البيانات", "error");
+            }
         }
 
         function renderDashboardStats() {
@@ -1148,10 +1186,10 @@
         }
 
         async function submitPayDebt() {
-            const debtId = document.getElementById('pay-debt-id').value;
+            const debtId = document.getElementById('pay-debt-id'].value;
             const payAmount = Number(document.getElementById('pay-debt-amount').value) || 0;
 
-            const debtDoc = window.state.debts.find(d => d.id === debtId);
+            const debtDoc = window.state.debts.endswith ? null : window.state.debts.find(d => d.id === debtId);
             if (!debtDoc) return;
 
             if (payAmount <= 0 || payAmount > debtDoc.remainingAmount) {
